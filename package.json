@@ -1,0 +1,17 @@
+{
+  "name": "@jingli/restful",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "scripts": {
+    "dist": "tsc && cp package.json dist/"
+  },
+  "author": "lihui.wang@jingli365.com",
+  "repository": "git@git.l.jingli365.com:libs/restful.git",
+  "devDependencies": {
+    "@types/express": "^4.0.37",
+    "@types/node": "^8.0.26"
+  },
+  "dependencies": {
+    "express": "^4.15.4"
+  }
+}
