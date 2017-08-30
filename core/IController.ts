@@ -11,5 +11,6 @@ export interface ReplyData {
 }
 
 export interface IController {
+    $isValidId(id: string): boolean;
     reply(code: number, data: any): ReplyData;
 }

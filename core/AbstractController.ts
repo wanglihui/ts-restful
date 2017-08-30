@@ -9,6 +9,8 @@ import {ERR_TEXT} from './code';
 
 export abstract class AbstractController implements IController {
 
+    abstract $isValidId(id: string) :boolean;
+
     reply(code: number, data: any) {
         return {
             code: code,

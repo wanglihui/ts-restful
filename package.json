@@ -1,6 +1,6 @@
 {
   "name": "@jingli/restful",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "main": "dist/index.js",
   "scripts": {
     "dist": "tsc && cp package.json dist/"
@@ -12,6 +12,7 @@
     "@types/node": "^8.0.26"
   },
   "dependencies": {
-    "express": "^4.15.4"
+    "express": "^4.15.4",
+    "tslib": "^1.7.1"
   }
 }

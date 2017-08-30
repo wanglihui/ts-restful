@@ -11,6 +11,10 @@ export abstract class AbstractModelController extends AbstractController {
         super();
     }
 
+    $isValidId(id: string) :boolean {
+        return /^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/.test(id);
+    }
+
     async get(req, res, next) {
         let {id} = req.params;
         let instance = await this.model.get(id);
