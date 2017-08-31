@@ -13,7 +13,7 @@ export function registerControllerToRouter(router: express.Router) {
         let methods = getAllMethods(Controller);
 
         let cls = new Controller();
-        if (cls.$before && cls.$before == 'function') {
+        if (cls.$before && typeof cls.$before == 'function') {
             router.use(url, wrapNextFn(cls.$before).bind(cls));
         }
 
