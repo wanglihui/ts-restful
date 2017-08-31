@@ -1,7 +1,7 @@
 # restful
 ---
 
-### Restful\Controller映射规范
+### Restful/Controller映射规范
 ---
 
 - GET       /ctrl/      => ctrl.find
