@@ -12,5 +12,6 @@ export interface ReplyData {
 
 export interface IController {
     $isValidId(id: string): boolean;
+    $before?: (req, res, next?)=> Promise<any>;
     reply(code: number, data: any): ReplyData;
 }

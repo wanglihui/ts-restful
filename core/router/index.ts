@@ -13,6 +13,10 @@ export function registerControllerToRouter(router: express.Router) {
         let methods = getAllMethods(Controller);
 
         let cls = new Controller();
+        if (cls.$before && cls.$before == 'function') {
+            router.use(url, wrapNextFn(cls.$before).bind(cls));
+        }
+
         methods = methods.filter((fnName) => {
             return ['get', 'update', 'delete', 'add', 'find'].indexOf(fnName) >= 0
                 || (typeof cls[fnName] == 'function' && cls[fnName].$url )
