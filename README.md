@@ -1,6 +1,18 @@
 # restful
 ---
 
+### 说明
+---
+
+- @Restful(mountUrl) 此装饰器可以接受一个URL函数，标示此Controller想要挂载的URL,如果没有
+  挂载的URL为Controller名字去掉Controller后缀
+- @Router(url) 此装饰器可以自定义Controller中函数对外的URL地址
+- scannerControllers 此函数会同步遍历 controller文件夹下所有文件去执行require("文件");
+- registerControllerToRouter 此函数会把所有调用了@Restful的controller注册到路由上
+- Controller.$isValidId 主要是用于验证此controller 的ID风格，如果此函数返回false，则不是ID
+- Controller.$before 调用Controller的每个函数之前会先调用
+    $before函数，此函数中可以做一些权限校验或者数据统一
+
 ### 使用
 ---
 
@@ -70,14 +82,3 @@ export class CityController extends AbstractController {
 }
 ```
 
-### 说明
----
-
-- @Restful(mountUrl) 此装饰器可以接受一个URL函数，标示此Controller想要挂载的URL,如果没有
-  挂载的URL为Controller名字去掉Controller后缀
-- @Router(url) 此装饰器可以自定义Controller中函数对外的URL地址
-- scannerControllers 此函数会同步遍历 controller文件夹下所有文件去执行require("文件");
-- registerControllerToRouter 此函数会把所有调用了@Restful的controller注册到路由上
-- Controller.$isValidId 主要是用于验证此controller 的ID风格，如果此函数返回false，则不是ID
-- Controller.$before 调用Controller的每个函数之前会先调用
-    $before函数，此函数中可以做一些权限校验或者数据统一
