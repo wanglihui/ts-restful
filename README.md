@@ -17,6 +17,8 @@
 ---
 
 ```javascript
+// router/index.ts 
+
 import http = require("http");
 
 import {scannerControllers, registerControllerToRouter} from "@jingli/restful";
@@ -31,8 +33,9 @@ registerControllerToRouter(router);
 export async function initHttp(app) {
     app.use('/api/v1', router);
 }
+```
 
-
+```javascript
 // controller/city.ts
 import {AbstractController, Restful, Router} from "@jingli/restful";
 
