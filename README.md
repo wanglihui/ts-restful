@@ -1,6 +1,15 @@
 # restful
 ---
 
+### Restful\Controller映射规范
+---
+
+- GET       /ctrl/      => ctrl.find
+- GET       /ctrl/:id   => ctrl.get
+- PUT       /ctrl/:id   => ctrl.update
+- POST      /ctrl/      => ctrl.add
+- DELETE    /ctrl/:id   => ctrl.delete
+
 ### 说明
 ---
 
