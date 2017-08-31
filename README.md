@@ -35,49 +35,33 @@ export async function initHttp(app) {
 
 // controller/city.ts
 import {AbstractController, Restful, Router} from "@jingli/restful";
-import API from '@jingli/dnode-api';
 
+//此处可以是 @Restful('/test')
 @Restful()
-export class CityController extends AbstractController {
+export class TestController extends AbstractController {
     constructor() {
         super();
     }
 
     $isValidId(id: string) {
-        return /^CTW?_\d+$/.test(id);
+        //只有ID是数字是才认为是ID 如 /test/1 可以请求到get  /test/xx 为返回404  /test/other 为映射到 other函数
+        return /^\d+$/.test(id);
+    }
+    
+    async $before(req, res, next) {
+        console.log("before...");
+        next(); //切记需要调用next，否则就停止到这里了
     }
 
+    // 调用地址为 /test/:id
     async get(req, res, next) {
-        let {id} = req.params;
-        let city = await API['place'].getCityInfo({cityCode: id});
-        city = this.transform(city);
-        res.json(this.reply(0, city));
+        res.send("get");
     }
-
-    async find(req, res, next) {
-        let {keyword} = req.query;
-        let cities = [];
-        if (!keyword) {
-            cities = await API['place'].queryHotCity({limit: 20});
-        } else {
-            cities = await API['place'].queryCity({keyword: keyword});
-        }
-        cities = cities.map( (city) => {
-            return this.transform(city);
-        });
-        res.json(this.reply(0, cities));
-    }
-
-    private transform(city) {
-        return {
-            id: city.id,
-            name: city.name,
-            pinyin: city.pinyin,
-            letter: city.letter,
-            latitude: city.latitude,
-            longitude: city.longitude,
-            parentId: city.parentId,
-        }
+    
+    // 调用地址为 /test/other
+    @Router("/other")
+    async other(req, res, next) {
+        res.send("other");
     }
 }
 ```
