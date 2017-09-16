@@ -72,14 +72,13 @@ function _inject() {
     for(let item of waitInject) {
         let {serviceName, target, funcName} = item;
         let serv = services.$cache[serviceName]
-        if (serv) {
-            return serv;
+        if (!serv) {
+            if (!services[serviceName]) {
+                throw new Error(`no service [${serviceName}] registry`);
+            }
+            serv = new services[serviceName]();
+            services.$cache[serviceName] = serv;
         }
-        if (!services[serviceName]) {
-            throw new Error(`no service [${serviceName}] registry`);
-        }
-        serv = new services[serviceName]();
-        services.$cache[serviceName] = serv;
 
         Object.defineProperty(target, funcName, {
             get: function() {
