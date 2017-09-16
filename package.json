@@ -1,6 +1,6 @@
 {
   "name": "@jingli/restful",
-  "version": "0.0.7",
+  "version": "0.1.1",
   "main": "dist/index.js",
   "scripts": {
     "dist": "tsc && cp package.json dist/"
