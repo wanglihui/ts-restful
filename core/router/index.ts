@@ -14,7 +14,7 @@ export function registerControllerToRouter(router: express.Router) {
 
         let cls = new Controller();
         if (cls.$before && typeof cls.$before == 'function') {
-            router.use(url, wrapNextFn(cls.$before).bind(cls));
+            router.use(url, wrapNextFn.bind(cls)(cls.$before));
         }
 
         methods = methods.filter((fnName) => {
