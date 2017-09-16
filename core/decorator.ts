@@ -33,7 +33,63 @@ export function Restful(mountUrl?: string) {
     }
 }
 
-export function scannerControllers(dir: string, ignores?: string[]) {
+const services: {[index: string]: any} = {}
+
+export function Service(name?: string) {
+
+    return function(constructor) {
+        if (!name) {
+            name = constructor.name.toLowerCase();
+        }
+        if (services[name]) {
+            console.warn(`\n!!!ignore registry [${constructor.name}], services [${name}] has register [${services[name].name}]!!!\n`);
+            return;
+        }
+        services[name] = constructor;
+    }
+
+}
+
+const waitInject: Array<{target, funcName, serviceName}> = [];
+
+export function AutoInject(serviceName?: string) {
+    return function(target, funcName, desc) {
+        if (!serviceName) {
+            serviceName = funcName;
+        }
+        waitInject.push({
+            target,
+            funcName,
+            serviceName
+        });
+    }
+}
+
+function _inject() {
+    if (!services.$cache) {
+        services.$cache = {};
+    }
+    for(let item of waitInject) {
+        let {serviceName, target, funcName} = item;
+        let serv = services.$cache[serviceName]
+        if (serv) {
+            return serv;
+        }
+        if (!services[serviceName]) {
+            throw new Error(`no service [${serviceName}] registry`);
+        }
+        serv = new services[serviceName]();
+        services.$cache[serviceName] = serv;
+
+        Object.defineProperty(target, funcName, {
+            get: function() {
+                return serv;
+            }
+        })
+    }
+}
+
+function _scan(dir: string, ignores?: string[]) {
     let files = fs.readdirSync(dir);
     for(let f of files) {
         let extReg = /\.ts|\.js$/;
@@ -43,7 +99,7 @@ export function scannerControllers(dir: string, ignores?: string[]) {
         let p = path.join(dir, f);
         let stat = fs.statSync(p);
         if (stat.isDirectory()) {
-            scannerControllers(p);
+            _scan(p);
             continue;
         }
         if (!extReg.test(p)) {
@@ -53,3 +109,9 @@ export function scannerControllers(dir: string, ignores?: string[]) {
         require(p);
     }
 }
+
+export function scannerDecoration(dir: string, ignores?: string[]) {
+    _scan(dir, ignores);
+    _inject();
+}
+

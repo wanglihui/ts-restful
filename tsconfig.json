@@ -5,6 +5,7 @@
     "sourceMap": true,
     "outDir": "dist/",
     "declaration": true,
+    "experimentalDecorators": true,
     "lib": ["es2015.promise", "es5", "DOM"],
     "importHelpers": true
   },
