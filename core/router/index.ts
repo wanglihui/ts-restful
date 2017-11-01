@@ -6,8 +6,14 @@
 import {getControllers} from "../decorator";
 import express = require("express");
 
-export function registerControllerToRouter(router: express.Router) {
+export interface RegisterControllerOptions {
+    isShowUrls?: boolean;
+    urlsPath?: string;
+}
+
+export function registerControllerToRouter(router: express.Router, options?: RegisterControllerOptions) {
     let controllers = getControllers();
+    let urls = [];
     for(let url in controllers) {
         let Controller = controllers[url];
         let methods = getAllMethods(Controller);
@@ -60,6 +66,14 @@ export function registerControllerToRouter(router: express.Router) {
 
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
+            urls.push(method.toUpperCase()+':'+curUrl);
+        })
+    }
+
+    if (options && options.isShowUrls) {
+        let urlsPath = options.urlsPath || '/~urls';
+        router.use(urlsPath, function(req, res, next) {
+            res.json(urls);
         })
     }
     return router;

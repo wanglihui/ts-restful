@@ -19,7 +19,7 @@ const server = http.createServer(app);
 const PORT = 5000;
 
 var router = express.Router()
-registerControllerToRouter(router);
+registerControllerToRouter(router, {isShowUrls: true});
 app.use('/api/v1', router);
 
 server.on('listening', (err) => {

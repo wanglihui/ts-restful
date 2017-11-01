@@ -30,4 +30,12 @@ export class TestController extends AbstractController{
     login(req, res, next) {
         res.send(this.test.asyHello());
     }
+
+    get(req, res, next) {
+        res.send("/get");
+    }
+
+    find(req, res, next) {
+        res.send("/find");
+    }
 }
