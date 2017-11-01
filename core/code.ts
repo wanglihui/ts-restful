@@ -21,3 +21,20 @@ export const ERR_TEXT = {
     502: '参数不正确',
     0: 'ok'
 }
+
+export function registerErrorCode(code: string, msg: string) {
+    if(ERR_TEXT[code]) {
+        console.warn(`code ${code} has register ${ERR_TEXT[code]}, but will override!`);
+    }
+    ERR_TEXT[code] = msg;
+}
+
+export function batchRegisterErrorCode(codes: {[index: string]: string}) {
+    for(let code in codes) {
+        if (!/^\d+$/.test(code)) {
+            console.warn(`code:${code} is not match ^\d+$ ignore!`);
+        }
+        let msg = codes[code];
+        ERR_TEXT[code] = msg;
+    }
+}
