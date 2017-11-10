@@ -5,9 +5,26 @@
 'use strict';
 import {AbstractController} from "./AbstractController";
 
-export abstract class AbstractModelController extends AbstractController {
+export interface ModelObjectInterface<T> { 
+    get(id: string): Promise<T>;
+    find(options): Promise<Array<T>>;
+    update(obj: T): Promise<T>;
+    destroy(obj: T): Promise<any>;
+    create(obj: T): T;
+}
 
-    constructor(private model: any, private property: any) {
+export interface PropertyInterface { 
+    [index: string]: any;
+}
+
+export interface ObjectInterface { 
+    save(): Promise<this>;
+    destroy(): Promise<any>;
+}
+
+export abstract class AbstractModelController<T extends ObjectInterface> extends AbstractController {
+
+    constructor(protected model: ModelObjectInterface<T>, private property: PropertyInterface) {
         super();
     }
 
@@ -47,7 +64,8 @@ export abstract class AbstractModelController extends AbstractController {
         if(!options.limit)
             options.limit = pz;
 
-        let pager = await this.model.find({where: query.where}, options);
+        options.where = query.where;
+        let pager = await this.model.find(options);
         // res.json(pager);
         res.json(this.reply(0, pager));
     }
@@ -78,7 +96,7 @@ export abstract class AbstractModelController extends AbstractController {
                 properties[key] = params[key];
             }
         }
-        let obj = this.model.create(properties);
+        let obj = this.model.create(properties as T);
         obj = await obj.save();
         res.json(this.reply(0, obj));
     }
