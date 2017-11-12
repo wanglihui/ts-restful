@@ -6,6 +6,7 @@
 
 import fs = require("fs")
 import path = require("path");
+import { Request } from '_debugger';
 
 const controllers = {};
 export function getControllers() {
@@ -30,6 +31,31 @@ export function Restful(mountUrl?: string) {
             mountUrl = '/' + target.name.replace(/Controller/, '').toLowerCase();
         }
         controllers[mountUrl] = target;
+    }
+}
+
+export interface ContextInterface { 
+    req: Request;
+    res: Response;
+    next?: Function;
+}
+
+export interface ResposeBodyFunc { 
+    (ctx: ContextInterface): Promise<Object>;
+}
+
+export function ResponseBody() { 
+    return  function (target, propertyKey, desc) { 
+        let fn: ResposeBodyFunc = desc.value;
+        desc.value = async function(req, res, next) {
+            let ctx = {
+                req,
+                res,
+                next,
+            }
+            let ret = await fn.bind(this)(ctx);
+            return res.json(ret);
+        }
     }
 }
 
