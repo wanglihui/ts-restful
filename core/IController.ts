@@ -7,7 +7,9 @@
 export interface ReplyData {
     code: number;
     data: any;
+    responseTime: number;
     msg?: string;
+    sign?: string;
 }
 
 export interface IController {
