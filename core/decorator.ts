@@ -40,13 +40,13 @@ export interface ContextInterface {
     next?: Function;
 }
 
-export interface ResposeBodyFunc { 
+export interface ResponseBodyFunc {
     (ctx: ContextInterface): Promise<Object>;
 }
 
 export function ResponseBody() { 
     return  function (target, propertyKey, desc) { 
-        let fn: ResposeBodyFunc = desc.value;
+        let fn: ResponseBodyFunc = desc.value;
         desc.value = async function(req, res, next) {
             let ctx = {
                 req,
@@ -58,6 +58,7 @@ export function ResponseBody() {
         }
     }
 }
+
 
 const services: {[index: string]: any} = {}
 
