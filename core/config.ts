@@ -8,7 +8,7 @@ export interface ConfigInterface {
     signKey: string;
 }
 
-const config:ConfigInterface = {
+let config:ConfigInterface = {
     signKey: null,
 }
 
