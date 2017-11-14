@@ -10,7 +10,7 @@ function md5(str) {
     return crypto.createHash("md5").update(str).digest('hex');
 }
 
-export function sign(originData: any, key: string) : string {
+export default function sign(originData: any, key: string) : string {
     //排序
     let sortedData = sortData(originData);
     //转成字符串

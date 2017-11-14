@@ -7,7 +7,7 @@
 import {IController, ReplyData} from "./IController";
 
 import {ERR_TEXT} from './code';
-import {sign} from "./sign";
+// import {sign} from "./sign";
 import {getConfig} from "./config";
 
 export function reply(code: number, data: any, key?: string): ReplyData {
@@ -23,7 +23,7 @@ export function reply(code: number, data: any, key?: string): ReplyData {
     let singStr = null;
     key = key || getConfig().signKey;
     if (key) {
-        singStr = sign(respData, key);
+        singStr = getConfig().sign(respData, key);
     }
     respData.sign = singStr;
     return respData;

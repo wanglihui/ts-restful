@@ -6,7 +6,13 @@
 'use strict';
 import {AbstractController} from "../../../core/AbstractController";
 import {Restful} from "../../../core/decorator";
+import {setConfig} from '../../../core/config';
 
+setConfig({
+    sign: function(data, key) {
+        return `123456`
+    }
+})
 @Restful()
 export class SignController extends AbstractController {
 
