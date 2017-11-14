@@ -5,9 +5,8 @@
 
 'use strict';
 import {IController, ReplyData} from "./IController";
-
+import express = require("express");
 import {ERR_TEXT} from './code';
-// import {sign} from "./sign";
 import {getConfig} from "./config";
 
 export function reply(code: number, data: any, key?: string): ReplyData {
@@ -33,5 +32,9 @@ export abstract class AbstractController implements IController {
 
     abstract $isValidId(id: string) :boolean;
     reply= reply;
+
+    simpleReply(res: any, code: number, data: any, key?: string) {
+        return res.json(this.reply(code, data, key));
+    }
 }
 
