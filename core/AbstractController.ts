@@ -6,9 +6,8 @@
 'use strict';
 import {IController, ReplyData} from "./IController";
 import {ERR_TEXT} from './code';
-import {getConfig} from "./config";
 
-export function reply(code: number, data: any, key?: string): ReplyData {
+export function reply(code: number, data: any): ReplyData {
     let msg = ERR_TEXT[code];
     let responseTime = Date.now();
 
@@ -18,12 +17,6 @@ export function reply(code: number, data: any, key?: string): ReplyData {
         responseTime,
         data,
     }
-    let singStr = null;
-    key = key || getConfig().signKey;
-    if (key) {
-        singStr = getConfig().sign(respData, key);
-    }
-    respData.sign = singStr;
     return respData;
 }
 

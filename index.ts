@@ -10,5 +10,3 @@ export * from './core/AbstractModelController';
 export * from './core/code';
 export * from './core/decorator';
 export * from './core/IController';
-export * from './core/config';
-export * from './core/sign';
