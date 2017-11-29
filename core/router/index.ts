@@ -5,18 +5,25 @@
 'use strict';
 import {getControllers} from "../decorator";
 import express = require("express");
+import _ = require("lodash");
 
 export interface RegisterControllerOptions {
     isShowUrls?: boolean;
     urlsPath?: string;
+    kebabCase?: boolean; //default false
 }
 
 export function registerControllerToRouter(router: express.Router, options?: RegisterControllerOptions) {
     let controllers = getControllers();
     let urls = [];
-    for(let url in controllers) {
+    for (let url in controllers) {
+        
         let Controller = controllers[url];
         let methods = getAllMethods(Controller);
+
+        if (options.kebabCase) {
+            url = _.kebabCase(url);
+        }
 
         let cls = new Controller();
         if (cls.$before && typeof cls.$before == 'function') {

@@ -28,7 +28,7 @@ export function Restful(mountUrl?: string) {
         };
 
         if (!mountUrl) {
-            mountUrl = '/' + target.name.replace(/Controller/, '').toLowerCase();
+            mountUrl = '/' + target.name.replace(/Controller/, '');
         }
         controllers[mountUrl] = target;
     }
