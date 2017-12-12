@@ -13,11 +13,21 @@ export function getControllers() {
     return controllers;
 }
 
-export function Router(url: string, method?: string) {
-    return function(target, propertyKey, desc) {
+export interface RouterOptionInterface { 
+    doc?: string;
+}
+
+export function Router(url: string, method?: string | RouterOptionInterface, options?: RouterOptionInterface) {
+    return function (target, propertyKey, desc) {
+        let defaultMethod = 'GET'
+        if (typeof method == 'object') { 
+            options = <RouterOptionInterface>method;
+            method = defaultMethod
+        }
         let fn = desc.value;
         fn.$url = url;
-        fn.$method = method || 'GET';
+        fn.$method = method || defaultMethod;
+        fn.$doc = options && options.doc;
     }
 }
 

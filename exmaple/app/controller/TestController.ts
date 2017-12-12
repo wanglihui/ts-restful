@@ -26,7 +26,7 @@ export class TestController extends AbstractController{
     set test(test: Test) {
     }
 
-    @Router('/index')
+    @Router('/index', {doc: "测试首页"})
     login(req, res, next) {
         res.send(this.test.asyHello());
     }
