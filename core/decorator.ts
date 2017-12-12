@@ -6,7 +6,7 @@
 
 import fs = require("fs")
 import path = require("path");
-import { Request } from '_debugger';
+import { Request } from 'express';
 
 const controllers = {};
 export function getControllers() {
