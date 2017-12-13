@@ -13,7 +13,7 @@ import {registerControllerToRouter} from '../core/router';
 const app = express();
 import path = require("path");
 
-scannerDecoration(path.join(__dirname, 'app'));
+scannerDecoration(path.join(__dirname, 'app'), [/\.d\.ts$/]);
 
 const server = http.createServer(app);
 const PORT = 5000;

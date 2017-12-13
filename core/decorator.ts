@@ -125,17 +125,37 @@ function _inject() {
     }
 }
 
-function _scan(dir: string, ignores?: string[]) {
+let extReg = /\.ts|\.js$/;
+
+function isNeedIgnore(f: string, ignores: (string | RegExp)[]) { 
+    let isIgnore = false;
+    if (!ignores) { 
+        return isIgnore;
+    }
+    
+    for (let ignore of ignores) {
+        if (ignore instanceof RegExp && ignore.test(f)) {
+            isIgnore = true;
+            break;
+        }
+        if (typeof ignore == 'string' && f.replace(extReg, '') == ignore) {
+            isIgnore = true;
+            break;
+        }
+    }
+    return isIgnore;
+}
+
+function _scan(dir: string, ignores?: (string | RegExp)[]) {
     let files = fs.readdirSync(dir);
-    for(let f of files) {
-        let extReg = /\.ts|\.js$/;
-        if (ignores && ignores.indexOf(f.replace(extReg, '')) >= 0) {
+    for (let f of files) {
+        if (isNeedIgnore(f, ignores)) { 
             continue;
         }
         let p = path.join(dir, f);
         let stat = fs.statSync(p);
         if (stat.isDirectory()) {
-            _scan(p);
+            _scan(p, ignores);
             continue;
         }
         if (!extReg.test(p)) {
@@ -146,7 +166,7 @@ function _scan(dir: string, ignores?: string[]) {
     }
 }
 
-export function scannerDecoration(dir: string, ignores?: string[]) {
+export function scannerDecoration(dir: string, ignores?: (string|RegExp)[]) {
     _scan(dir, ignores);
     _inject();
 }
