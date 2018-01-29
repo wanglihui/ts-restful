@@ -6,7 +6,7 @@
 
 import fs = require("fs")
 import path = require("path");
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 const controllers = {};
 export function getControllers() {
