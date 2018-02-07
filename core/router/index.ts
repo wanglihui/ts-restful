@@ -21,7 +21,7 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
         let Controller = controllers[url];
         let methods = getAllMethods(Controller);
 
-        if (options.kebabCase) {
+        if (options && options.kebabCase) {
             url = _.kebabCase(url);
         }
 
