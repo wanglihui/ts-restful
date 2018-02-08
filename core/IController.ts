@@ -4,6 +4,8 @@
 
 
 'use strict';
+
+import { Request, Response, NextFunction } from 'express-serve-static-core';
 export interface ReplyData {
     code: number;
     data: any;
@@ -14,6 +16,6 @@ export interface ReplyData {
 
 export interface IController {
     $isValidId(id: string): boolean;
-    $before?: (req, res, next?)=> Promise<any>;
+    $before?: (req: Request, res: Response, next?: NextFunction)=> Promise<any>;
     reply(code: number, data: any): ReplyData;
 }
