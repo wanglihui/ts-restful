@@ -112,7 +112,6 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
             fn = wrapNextFn.bind(cls)(fn);
 
             method = method.toLowerCase();
-            console.log(method, curUrl)
             router[method](curUrl, fn.bind(cls));
             urls.push(method.toUpperCase() + '  ' + curUrl + '  ' + methodDoc);
         })
