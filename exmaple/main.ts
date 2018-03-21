@@ -5,6 +5,18 @@
 
 'use strict';
 
+import argv = require("argv");
+var args = argv.option([
+    {
+        name: 'group',
+        short: 'g',
+        type: 'string'
+    }
+]).run();
+
+var group = args.options.group;
+
+// argv.info
 import http = require("http");
 import express = require("express");
 import {scannerDecoration, } from "../core/decorator";
@@ -18,8 +30,8 @@ scannerDecoration(path.join(__dirname, 'app'), [/\.d\.ts$/]);
 const server = http.createServer(app);
 const PORT = 5000;
 
-var router = express.Router()
-registerControllerToRouter(router, {isShowUrls: true, kebabCase: true});
+var router = express.Router();
+registerControllerToRouter(router, { isShowUrls: true, kebabCase: true, group: group });
 app.use('/api/v1', router);
 
 server.on('listening', (err) => {

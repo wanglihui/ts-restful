@@ -8,9 +8,40 @@ import express = require("express");
 import _ = require("lodash");
 
 export interface RegisterControllerOptions {
+    /**
+     * 是否显示挂载的URL
+     * 如果启用，则会挂载 ~urls 到router上
+     */
     isShowUrls?: boolean;
+    /**
+     * 给挂载的URL增加一个前缀
+     * 例如 /jingli
+     */
     urlsPath?: string;
+    /**
+     * kebabCase用于解决地址大小写问题
+     * /ManagerUser转为 /manager-user
+     * 默认false,不启用转换
+     */
     kebabCase?: boolean; //default false
+    /**
+     * 分组用于解决：
+     * 例如有普通地址，有的需要登录后才能访问的地址，有的可能只有管理员才能访问的地址
+     * 普通地址我们想挂载到 /public, 需要登录后的地址我们要挂载到 /customer 管理员的地址挂载到 /manager
+     * 
+     * 
+     * @Group("manager")
+     * @Restful()
+     * export class ManagerController extends AbstractController {
+     *      
+     *        get(req, res, next) { res.send("ok");}
+     * }
+     * 
+     * var router = new express.Router();
+     * registerControllerToRouter(router, {group: 'manager'});
+     * app.use('/manager', router);
+     */
+    group?: string;      //分组
 }
 
 export function registerControllerToRouter(router: express.Router, options?: RegisterControllerOptions) {
@@ -19,12 +50,17 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
     for (let url in controllers) {
         
         let Controller = controllers[url];
+        if (options && options.group != Controller.$group) { 
+            continue;
+        }
         let methods = getAllMethods(Controller);
 
         if (options && options.kebabCase) {
             url = _.kebabCase(url);
         }
-
+        if (!/^\//.test(url)) { 
+            url = '/' + url;
+        }
         let cls = new Controller();
         if (cls.$before && typeof cls.$before == 'function') {
             router.use(url, wrapNextFn.bind(cls)(cls.$before));
@@ -76,6 +112,7 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
             fn = wrapNextFn.bind(cls)(fn);
 
             method = method.toLowerCase();
+            console.log(method, curUrl)
             router[method](curUrl, fn.bind(cls));
             urls.push(method.toUpperCase() + '  ' + curUrl + '  ' + methodDoc);
         })

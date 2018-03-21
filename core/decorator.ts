@@ -44,6 +44,16 @@ export function Restful(mountUrl?: string) {
     }
 }
 
+/**
+ * 支持Controller分组
+ * @param groupName 分组名称
+ */
+export function Group(groupName: string) { 
+    return function (target) { 
+        target.$group = groupName;
+    }
+}
+
 export interface ContextInterface { 
     req: Request;
     res: Response;
