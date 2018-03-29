@@ -42,6 +42,10 @@ export interface RegisterControllerOptions {
      * app.use('/manager', router);
      */
     group?: string;      //分组
+    /**
+     * 是否开启日志，记录请求
+     */
+    logging?: boolean;
 }
 
 export function registerControllerToRouter(router: express.Router, options?: RegisterControllerOptions) {
@@ -119,9 +123,9 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
 
     if (options && options.isShowUrls) {
         let urlsPath = options.urlsPath || '/~urls';
-        router.use(urlsPath, function(req, res, next) {
+        router.all(urlsPath, wrapNextFn(function (req, res, next) {
             res.json(urls);
-        })
+        }));
     }
     return router;
 }
@@ -135,8 +139,6 @@ function getAllMethods(Cls) {
         }
         prototype = Object.getPrototypeOf(prototype)
     } while(prototype);
-
-
     return methods;
 }
 
@@ -161,10 +163,14 @@ function wrapVerifyIdFn(fn) {
 function wrapNextFn(fn) {
     let self = this;
     return (req, res, next) => {
+        let label = req.url;
+        console.time(label);
         let ret = fn.bind(self)(req, res, next);
         if (ret && ret.then && typeof ret.then == 'function') {
+            console.timeEnd(label);
             return ret.catch(next);
         }
+        console.timeEnd(label);
         return ret;
     }
 }
