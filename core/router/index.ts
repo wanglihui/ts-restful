@@ -162,15 +162,19 @@ function wrapVerifyIdFn(fn) {
 
 function wrapNextFn(fn) {
     let self = this;
-    return (req, res, next) => {
+    return async (req, res, next) => {
         let label = req.url;
         console.time(label);
-        let ret = fn.bind(self)(req, res, next);
-        if (ret && ret.then && typeof ret.then == 'function') {
+        try {
+            let ret = fn.bind(self)(req, res, next);
+            if (ret) { 
+                ret = await ret;
+            }
+            return ret;
+        } catch (err) { 
+            return next(err);
+        } finally { 
             console.timeEnd(label);
-            return ret.catch(next);
         }
-        console.timeEnd(label);
-        return ret;
     }
 }
