@@ -164,7 +164,7 @@ function wrapNextFn(fn) {
     let self = this;
     return async (req, res, next) => {
         let label = req.url;
-        console.time(label);
+        let beginTime = process.hrtime();
         try {
             let ret = fn.bind(self)(req, res, next);
             if (ret) { 
@@ -174,7 +174,8 @@ function wrapNextFn(fn) {
         } catch (err) { 
             return next(err);
         } finally { 
-            console.timeEnd(label);
+            let diff = process.hrtime(beginTime);
+            console.log(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
         }
     }
 }
