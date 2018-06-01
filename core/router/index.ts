@@ -6,6 +6,7 @@
 import {getControllers} from "../decorator";
 import express = require("express");
 import _ = require("lodash");
+const symDesc = require('symbol-description');
 
 export interface RegisterControllerOptions {
     /**
@@ -51,9 +52,10 @@ export interface RegisterControllerOptions {
 export function registerControllerToRouter(router: express.Router, options?: RegisterControllerOptions) {
     let controllers = getControllers();
     let urls = [];
-    for (let url in controllers) {
-        
-        let Controller = controllers[url];
+    let urlSymbols = (<any>Object).getOwnPropertySymbols(controllers);
+    for (let urlSym of urlSymbols) {
+        let Controller = controllers[urlSym];
+        let url = symDesc(urlSym)
         if (options && options.group != Controller.$group) { 
             continue;
         }
