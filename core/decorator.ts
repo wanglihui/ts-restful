@@ -40,7 +40,7 @@ export function Restful(mountUrl?: string) {
         if (!mountUrl) {
             mountUrl = '/' + target.name.replace(/Controller/, '');
         }
-        controllers[mountUrl] = target;
+        controllers[Symbol(mountUrl)] = target;
     }
 }
 
