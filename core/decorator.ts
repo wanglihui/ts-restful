@@ -50,7 +50,10 @@ export function Restful(mountUrl?: string) {
  */
 export function Group(groupName: string) { 
     return function (target) { 
-        target.$group = groupName;
+        if (!target.$groups) { 
+            target.$groups = [];
+        }
+        target.$groups.push(groupName);
     }
 }
 

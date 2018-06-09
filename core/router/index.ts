@@ -56,7 +56,16 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
     for (let urlSym of urlSymbols) {
         let Controller = controllers[urlSym];
         let url = symDesc(urlSym)
-        if (options && options.group != Controller.$group) { 
+        //如果已经启用分组,controller没有分组名称的直接跳过
+        if (options && options.group && !Controller.$groups) { 
+            continue;
+        }
+        //如果已经启用分组,controller分组与期望分组不一致，直接跳过
+        if (options && options.group && Controller.$groups.indexOf(options.group) < 0) { 
+            continue;
+        }
+        //如果没启用分组，但是controller有分组，直接跳过
+        if ( (!options || !options.group) && Controller.$groups && Controller.$groups.length) { 
             continue;
         }
         let methods = getAllMethods(Controller);

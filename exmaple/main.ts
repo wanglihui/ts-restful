@@ -31,6 +31,9 @@ const server = http.createServer(app);
 const PORT = 5000;
 
 var router = express.Router();
+if (group) { 
+    console.log(`启用分组:${group}`)
+}
 registerControllerToRouter(router, { isShowUrls: true, kebabCase: true, group: group });
 app.use('/api/v1', router);
 
