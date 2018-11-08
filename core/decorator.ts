@@ -7,7 +7,7 @@
 import fs = require("fs")
 import path = require("path");
 import { Request, Response } from 'express';
-
+import { filter} from 'json-filter2';
 const controllers = {};
 export function getControllers() {
     return controllers;
@@ -82,6 +82,21 @@ export function ResponseBody() {
     }
 }
 
+export function SchemaFilter(schema: { [index: string]: any }, checkType: boolean = true) { 
+    return function (target, propertyKey: string, desc) { 
+        let fn = desc.value;
+        desc.value = async (req, res, next) => { 
+            let jsonFn = res.json;
+            res.json = (data: any) => { 
+                return jsonFn.bind(res)(filter(data, schema, checkType))
+            }
+            return fn(req, res, next);
+        }
+        desc.value.$schema = schema;
+        Object.assign(desc.value, fn);
+    }
+}
+
 
 const services: {[index: string]: any} = {}
 
@@ -100,7 +115,7 @@ export function Service(name?: string) {
 
 }
 
-const waitInject: Array<{target, funcName, serviceName}> = [];
+const waitInject: { target, funcName, serviceName }[] = [];
 
 export function AutoInject(serviceName?: string) {
     return function(target, funcName, desc) {

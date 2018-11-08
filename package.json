@@ -1,6 +1,6 @@
 {
   "name": "@jingli/restful",
-  "version": "2.0.16",
+  "version": "3.0.0",
   "main": "index.js",
   "scripts": {
     "dist": "tsc && cp package.json dist/"
@@ -17,6 +17,7 @@
     "typescript": "^2.5.2"
   },
   "dependencies": {
+    "json-filter2": "0.0.1",
     "lodash": "^4.17.4",
     "symbol-description": "^1.0.0",
     "tslib": "^1.7.1"

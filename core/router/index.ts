@@ -120,6 +120,10 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
             if (fn.$doc) {
                 methodDoc = fn.$doc;
             }
+            let schema = null;
+            if (fn.$schema) { 
+                schema = fn.$schema;
+            }
 
             //验证ID是否合法
             fn = wrapVerifyIdFn.bind(cls)(fn);
@@ -128,7 +132,7 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
 
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
-            urls.push(method.toUpperCase() + '  ' + curUrl + '  ' + methodDoc);
+            urls.push({ url: method.toUpperCase() + '  ' + curUrl + '  ' + methodDoc , schema: schema});
         })
     }
 

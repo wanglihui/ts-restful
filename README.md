@@ -22,6 +22,7 @@
 - (controller instance).$before 调用Controller的每个函数之前会先调用
     $before函数，此函数中可以做一些权限校验或者数据统一
 - @ResponseBody() 直接将函数返回内容作为response相应内容
+- @SchemaFilter(schema: any, checkType: boolean) 按照schema指定的格式过滤返回结果, checkType 如果不指定或者未true，将严格检查响应的类型是否和指定的schema类型匹配
 
 ### 使用
 ---
@@ -90,3 +91,5 @@ export class TestController extends AbstractController {
 }
 ```
 
+# changelog
+- V 3.0 支持 @SchemaFilter 直接支持按照指定的schema过滤返回给客户端的结果,schema 参考 https://www.npmjs.com/package/json-filter2
