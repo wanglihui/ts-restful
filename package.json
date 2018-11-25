@@ -1,5 +1,5 @@
 {
-  "name": "@jingli/restful",
+  "name": "ts-restful",
   "version": "3.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -7,7 +7,7 @@
     "dist": "rm -rf dist && tsc"
   },
   "author": "lihui.wang@jingli365.com",
-  "repository": "git@git.l.jingli365.com:libs/restful.git",
+  "repository": "git@gitee.com:dog/ts-restful.git",
   "devDependencies": {
     "@types/argv": "0.0.4",
     "@types/express": "^4.0.37",
