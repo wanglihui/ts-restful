@@ -1,22 +1,32 @@
 # restful
 ---
+    当我们使用 nodejs express开发web项目时,是否写了很多 路由和 controller 映射的代码？我们的路由规则是否是按照restful规范去实现的呢？
+    ts-express-restful帮你去简化路由与controller映射的样板代码，如果按照restfu规范，你只需要关注资源提供方式，剩下的交给ts-express-restful.
+    当然如果你想自定义路由也很简单，只需要简单一句注解就好，感谢spring mvc 给了我很大的参考。
 
-### Restful/Controller映射规范
+### Router与Controller自动映射逻辑
 ---
 
-- GET       /ctrl/      => ctrl.find
-- GET       /ctrl/:id   => ctrl.get
-- PUT       /ctrl/:id   => ctrl.update
-- POST      /ctrl/      => ctrl.add
-- DELETE    /ctrl/:id   => ctrl.delete
+此处ctrl为controller类名 去掉 Controller后缀.如类名为 UserController, ctrl为 user;
 
-### 说明
+| Controller函数名 | 映射的Http Method | 映射的路由地址 | 
+|-----------------|------------------|--------------|
+| find            | /ctrl/           |  GET         |
+| get             | /ctrl/:id        |  GET         |
+| update          | /ctrl/:id        |  PUT         |
+| add             | /ctrl/           |  POST        |
+| delete          | /ctrl/:id        |  DELETE      |
+| @Router("/other", "GET")| /ctrl/other     | GET   |
+
+
+### 主要函数\注解说明
 ---
 
-- @Restful(mountUrl) 此装饰器可以接受一个URL函数，标示此Controller想要挂载的URL,如果没有
+
+- @Restful(mountUrl) 将一个Controller转为一个RestfulController, 此装饰器可以接受一个URL函数，标示此Controller想要挂载的URL,如果没有
   挂载的URL为Controller名字去掉Controller后缀
-- @Router(url) 此装饰器可以自定义Controller中函数对外的URL地址
-- scannerDecorator 此函数会同步遍历 controller文件夹下所有文件去执行require("文件");
+- @Router(url) 将Controller中的函数转为一个可供外部访问的Http Api, 此装饰器可以自定义Controller中函数对外的URL地址
+- scannerDecorator 此函数会需要扫描注解的路径
 - registerControllerToRouter 此函数会把所有调用了@Restful的controller注册到路由上
 - (controller instance).$isValidId 主要是用于验证此controller 的ID风格，如果此函数返回false，则不是ID
 - (controller instance).$before 调用Controller的每个函数之前会先调用
