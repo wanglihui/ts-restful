@@ -32,7 +32,7 @@
 
 import http = require("http");
 
-import {scannerControllers, registerControllerToRouter} from "@jingli/restful";
+import {scannerControllers, registerControllerToRouter} from "ts-express-restful";
 
 import path = require("path");
 import express = require("express");
@@ -48,7 +48,7 @@ export async function initHttp(app) {
 
 ```javascript
 // controller/city.ts
-import {AbstractController, Restful, Router} from "@jingli/restful";
+import {AbstractController, Restful, Router} from "ts-express-restful";
 
 //此处可以是 @Restful('/test')
 @Restful()
