@@ -11,7 +11,7 @@ export interface ReplyData {
     data: any;
     responseTime: number;
     msg?: string;
-    sign?: string;
+    sign?: string;  
 }
 
 export interface IController {

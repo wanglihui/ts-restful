@@ -14,7 +14,6 @@ const controllers = [];
 export function getControllers() {
     return controllers;
 }
-
 export interface RouterOptionInterface { 
     doc?: string;
 }
@@ -126,58 +125,24 @@ export function SchemaFilter(schema: { [index: string]: any }, checkType: boolea
 
 
 const services: {[index: string]: any} = {}
+const serviceConstructors = [];
 
-export function Service(name?: string) {
-
-    return function(constructor) {
-        if (!name) {
-            name = constructor.name.toLowerCase();
-        }
-        if (services[name]) {
-            console.warn(`\n!!!ignore registry [${constructor.name}], services [${name}] has register [${services[name].name}]!!!\n`);
-            return;
-        }
-        services[name] = constructor;
-    }
-
-}
-
-const waitInject: { target, funcName, serviceName }[] = [];
-
-export function AutoInject(serviceName?: string) {
-    return function(target, funcName, desc) {
-        if (!serviceName) {
-            serviceName = funcName;
-        }
-        waitInject.push({
-            target,
-            funcName,
-            serviceName
-        });
+export function Service() {
+    return function (constructor) {
+        serviceConstructors.push(constructor);
     }
 }
 
-function _inject() {
-    if (!services.$cache) {
-        services.$cache = {};
-    }
-    for(let item of waitInject) {
-        let {serviceName, target, funcName} = item;
-        let serv = services.$cache[serviceName]
-        if (!serv) {
-            if (!services[serviceName]) {
-                throw new Error(`no service [${serviceName}] registry`);
-            }
-            serv = new services[serviceName]();
-            services.$cache[serviceName] = serv;
-        }
+export function Autowire(target, key) { 
+    const Constructor = Reflect.getMetadata('design:type', target, key);
+    target[key] = getMatchService(Constructor);
+}
 
-        Object.defineProperty(target, funcName, {
-            get: function() {
-                return serv;
-            }
-        })
+function getMatchService(Constructor: any) { 
+    if (!services[Constructor]) { 
+        services[Constructor] = new Constructor();
     }
+    return services[Constructor];
 }
 
 let extReg = /\.ts|\.js$/;
@@ -223,6 +188,5 @@ function _scan(dir: string, ignores?: (string | RegExp)[]) {
 
 export function scannerDecoration(dir: string, ignores?: (string|RegExp)[]) {
     _scan(dir, ignores);
-    _inject();
 }
 

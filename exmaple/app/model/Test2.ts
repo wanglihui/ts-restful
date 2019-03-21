@@ -6,7 +6,7 @@
 'use strict';
 import {Service} from "../../../core/decorator";
 
-@Service("test")
+@Service()
 export class Test2 {
 
 }
