@@ -1,3 +1,4 @@
+import { URL_KEY, METHOD_KEY, DOC_KEy, SCHEMA_KEY, GROUP_KEY } from './../constant';
 /**
  * Created by wlh on 2017/8/29.
  */
@@ -6,7 +7,7 @@
 import {getControllers} from "../decorator";
 import express = require("express");
 import _ = require("lodash");
-const symDesc = require('symbol-description');
+import 'reflect-metadata';
 
 export interface RegisterControllerOptions {
     /**
@@ -52,20 +53,19 @@ export interface RegisterControllerOptions {
 export function registerControllerToRouter(router: express.Router, options?: RegisterControllerOptions) {
     let controllers = getControllers();
     let urls = [];
-    let urlSymbols = (<any>Object).getOwnPropertySymbols(controllers);
-    for (let urlSym of urlSymbols) {
-        let Controller = controllers[urlSym];
-        let url = symDesc(urlSym)
+    for (let Controller of controllers) { 
+        let url = Reflect.getMetadata(URL_KEY, Controller);
         //如果已经启用分组,controller没有分组名称的直接跳过
-        if (options && options.group && !Controller.$groups) { 
+        let group = Reflect.getMetadata(GROUP_KEY, Controller);
+        if (options && options.group && !group) {
             continue;
         }
         //如果已经启用分组,controller分组与期望分组不一致，直接跳过
-        if (options && options.group && Controller.$groups.indexOf(options.group) < 0) { 
+        if (options && options.group && group.indexOf(options.group) < 0) {
             continue;
         }
         //如果没启用分组，但是controller有分组，直接跳过
-        if ( (!options || !options.group) && Controller.$groups && Controller.$groups.length) { 
+        if ((!options || !options.group) && group && group.length) {
             continue;
         }
         let methods = getAllMethods(Controller);
@@ -73,7 +73,7 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
         if (options && options.kebabCase) {
             url = _.kebabCase(url);
         }
-        if (!/^\//.test(url)) { 
+        if (!/^\//.test(url)) {
             url = '/' + url;
         }
         let cls = new Controller();
@@ -82,11 +82,12 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
         }
 
         methods = methods.filter((fnName) => {
+            const url = Reflect.getMetadata(URL_KEY, cls, fnName)
             return ['get', 'update', 'delete', 'add', 'find'].indexOf(fnName) >= 0
-                || (typeof cls[fnName] == 'function' && cls[fnName].$url )
+                || (typeof cls[fnName] == 'function' && url);
         });
 
-        methods.forEach( (fnName) => {
+        methods.forEach((fnName) => {
             let curUrl = url;
             let method = 'get';
 
@@ -109,20 +110,20 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
             }
 
             let fn = cls[fnName];
-            if (fn.$url) {
-                curUrl += fn.$url;
+            if (Reflect.hasMetadata(URL_KEY, cls, fnName)) {
+                curUrl += Reflect.getMetadata(URL_KEY, cls, fnName);
             }
 
-            if (fn.$method) {
-                method = fn.$method;
+            if (Reflect.hasMetadata(METHOD_KEY, cls, fnName)) {
+                method = Reflect.getMetadata(METHOD_KEY, cls, fnName)
             }
             let methodDoc = '';
-            if (fn.$doc) {
-                methodDoc = fn.$doc;
+            if (Reflect.hasMetadata(DOC_KEy, cls, fnName)) {
+                methodDoc = Reflect.getMetadata(DOC_KEy, cls, fnName)
             }
             let schema = null;
-            if (fn.$schema) { 
-                schema = fn.$schema;
+            if (Reflect.hasMetadata(SCHEMA_KEY, cls, fnName)) {
+                schema = Reflect.getMetadata(SCHEMA_KEY, cls, fnName)
             }
 
             //验证ID是否合法
@@ -132,7 +133,7 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
 
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
-            urls.push({ url: method.toUpperCase() + '  ' + curUrl + '  ' + methodDoc , schema: schema});
+            urls.push({ url: method.toUpperCase() + '  ' + curUrl + '  ' + methodDoc, schema: schema });
         })
     }
 

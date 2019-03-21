@@ -1,6 +1,6 @@
 {
   "name": "ts-express-restful",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -20,6 +20,7 @@
   "dependencies": {
     "json-filter2": "0.0.1",
     "lodash": "^4.17.4",
+    "reflect-metadata": "^0.1.13",
     "symbol-description": "^1.0.0",
     "tslib": "^1.7.1"
   },

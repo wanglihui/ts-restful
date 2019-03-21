@@ -5,10 +5,10 @@
 
 'use strict';
 import {Test} from "../model/Test";
-import {AutoInject, Restful, Router} from "../../../core/decorator";
+import {AutoInject, Restful, Router, RequestMapping} from "../../../core/decorator";
 import {AbstractController} from "../../../core/AbstractController";
 
-@Restful()
+@Restful('/test-1')
 export class TestController extends AbstractController{
 
     constructor() {
@@ -26,7 +26,7 @@ export class TestController extends AbstractController{
     set test(test: Test) {
     }
 
-    @Router('/index', {doc: "测试首页"})
+    @RequestMapping('/index', {doc: "测试首页"})
     login(req, res, next) {
         res.send(this.test.asyHello());
     }
