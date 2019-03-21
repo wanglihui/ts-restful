@@ -48,17 +48,26 @@ export function Router(url: string, method?: string | RouterOptionInterface, opt
 
 const UUID_REG = /^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/;
 
-export function Restful(mountUrl?: string) {
-    return function(target) {
-        target.prototype.$isValidId = target.prototype.$isValidId || function(id) {
+export function Restful(mountUrl?: string| any) : any {
+    const fn = function (target, url) {
+        target.prototype.$isValidId = target.prototype.$isValidId || function (id) {
             return UUID_REG.test(id.toString());
         };
 
-        if (!mountUrl) {
-            mountUrl = '/' + target.name.replace(/Controller/, '');
+        if (!url) {
+            url = '/' + target.name.replace(/Controller/, '');
         }
         controllers.push(target);
-        Reflect.defineMetadata(URL_KEY, mountUrl, target);
+        Reflect.defineMetadata(URL_KEY, url, target);
+    }
+
+    if (typeof mountUrl == 'function') {
+        let target = mountUrl;
+        let url = '/' + target.name.replace(/Controller/, '');
+        return fn(target, url);
+    }
+    return function (target) {
+        return fn(target, mountUrl);
     }
 }
 

@@ -7,7 +7,7 @@
 import {AbstractController} from "../../../core/AbstractController";
 import {Restful} from "../../../core/decorator";
 
-@Restful()
+@Restful
 export class OtherController extends AbstractController {
 
     $isValidId(id: string) {
