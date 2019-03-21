@@ -1,8 +1,10 @@
 # restful
 ---
+```
     当我们使用 nodejs express开发web项目时,是否写了很多 路由和 controller 映射的代码？我们的路由规则是否是按照restful规范去实现的呢？
     ts-express-restful帮你去简化路由与controller映射的样板代码，如果按照restfu规范，你只需要关注资源提供方式，剩下的交给ts-express-restful.
     当然如果你想自定义路由也很简单，只需要简单一句注解就好，感谢spring mvc 给了我很大的参考。
+```    
 
 ### Router与Controller自动映射逻辑
 ---
@@ -33,6 +35,7 @@
     $before函数，此函数中可以做一些权限校验或者数据统一
 - @ResponseBody() 直接将函数返回内容作为response相应内容
 - @SchemaFilter(schema: any, checkType: boolean) 按照schema指定的格式过滤返回结果, checkType 如果不指定或者未true，将严格检查响应的类型是否和指定的schema类型匹配
+- @Autowire @Service 自动注入Service
 
 ### 使用
 ---
@@ -101,5 +104,30 @@ export class TestController extends AbstractController {
 }
 ```
 
+### service自动注入
+```
+    @Service()
+    export class TestService {
+
+        sayHello() {
+            return 'hello world';
+        }
+    }
+
+    @Restful
+    export class TestController {
+
+        @Autowire
+        test: TestService;
+
+        @GetMapping("/helloword")
+        sayHello(req, res, next) {
+            res.send(this.test.sayHello());
+        }
+    }
+```
+
 # changelog
 - V 3.0 支持 @SchemaFilter 直接支持按照指定的schema过滤返回给客户端的结果,schema 参考 https://www.npmjs.com/package/json-filter2
+- v 4.0 使用 reflect-metadata 重新实现metadata信息
+- v 4.0 重新实现 @Service @Autowire

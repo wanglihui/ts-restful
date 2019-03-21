@@ -1,10 +1,11 @@
 {
   "name": "ts-express-restful",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "dist": "rm -rf dist && tsc"
+    "dist": "rm -rf dist && tsc",
+    "prepack": "rm -rf dist && tsc"
   },
   "author": "lihui.wang@jingli365.com",
   "repository": {
