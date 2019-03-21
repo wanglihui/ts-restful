@@ -25,17 +25,28 @@
 ---
 
 
-- @Restful(mountUrl) 将一个Controller转为一个RestfulController, 此装饰器可以接受一个URL函数，标示此Controller想要挂载的URL,如果没有
-  挂载的URL为Controller名字去掉Controller后缀
-- @Router(url) 将Controller中的函数转为一个可供外部访问的Http Api, 此装饰器可以自定义Controller中函数对外的URL地址
-- scannerDecorator 此函数会需要扫描注解的路径
-- registerControllerToRouter 此函数会把所有调用了@Restful的controller注册到路由上
-- (controller instance).$isValidId 主要是用于验证此controller 的ID风格，如果此函数返回false，则不是ID
-- (controller instance).$before 调用Controller的每个函数之前会先调用
-    $before函数，此函数中可以做一些权限校验或者数据统一
-- @ResponseBody() 直接将函数返回内容作为response相应内容
-- @SchemaFilter(schema: any, checkType: boolean) 按照schema指定的格式过滤返回结果, checkType 如果不指定或者未true，将严格检查响应的类型是否和指定的schema类型匹配
-- @Autowire @Service 自动注入Service
+-  @Restful @Restful(mountUrl)
+  - 将一个Controller转为一个RestfulController, 此装饰器可以接受一个URL函数，标示此Controller想要挂载的URL,如果没有挂载的URL为Controller名字去掉Controller后缀
+- @Router(url, method?: string, options: any) 
+  - 将Controller中的函数转为一个可供外部访问的Http Api, 此装饰器可以自定义Controller中函数对外的URL地址
+- @RequestMapping @PostMapping @GetMapping
+  - 类似于Router
+- scannerDecorator 
+  - 此函数会需要扫描注解的路径
+- registerControllerToRouter 
+  - 此函数会把所有调用了@Restful的controller注册到路由上
+- (controller instance).$isValidId 
+  - 主要是用于验证此controller 的ID风格，如果此函数返回false，则不是ID
+- (controller instance).$before
+  -  调用Controller的每个函数之前会先调用$before函数，此函数中可以做一些权限校验或者数据统一
+- @ResponseBody() 
+  - 直接将函数返回内容作为response相应内容
+- @SchemaFilter(schema: any, checkType: boolean) 
+  - 按照schema指定的格式过滤返回结果, checkType 如果不指定或者未true，将严格检查响应的类型是否和指定的schema类型匹配
+- @Autowire 
+  - 自动注入Service
+- @Service 
+  - 将一个class标记为service
 
 ### 使用
 ---
