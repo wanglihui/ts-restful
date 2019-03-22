@@ -26,7 +26,7 @@
 
 
 -  @Restful @Restful(mountUrl)
-  - 将一个Controller转为一个RestfulController, 此装饰器可以接受一个URL函数，标示此Controller想要挂载的URL,如果没有挂载的URL为Controller名字去掉Controller后缀
+   - 将一个Controller转为一个RestfulController, 此装饰器可以接受一个URL函数，标示此Controller想要挂载的URL,如果没有挂载的URL为Controller名字去掉Controller后缀
 - @Router(url, method?: string, options: any) 
   - 将Controller中的函数转为一个可供外部访问的Http Api, 此装饰器可以自定义Controller中函数对外的URL地址
 - @RequestMapping @PostMapping @GetMapping
@@ -50,6 +50,8 @@
 
 ### 使用
 ---
+
+###### tsconfig.json 中开启 emitDecorateMetadata
 
 ```javascript
 // router/index.ts 
