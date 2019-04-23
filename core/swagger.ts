@@ -167,7 +167,7 @@ export interface ISwaggerResponse {
     };
 }
 
-type IType = "array" | "string" | "integer" | "enum";
+export type IType = "array" | "string" | "integer" | "enum";
 
 export interface ISecurity { 
     [index: string]: IOAuth | IApiKey;
