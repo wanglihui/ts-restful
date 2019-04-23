@@ -194,7 +194,7 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
     if (options && options.swagger) { 
         router.all('/swagger', wrapNextFn(function (req, res, next) { 
             let obj: swagger.ISwagger = JSON.parse(JSON.stringify(swaggerObj));
-            cleanSwagger(options.group, obj);
+            obj = cleanSwagger(options.group, obj);
             res.json(obj);
         }))
     }
