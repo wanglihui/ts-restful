@@ -140,6 +140,11 @@ export class TestController extends AbstractController {
     }
 ```
 
+## [自动生成文档](./swagger.md)
+```
+     自动生成文档还有若干问题,正在解决
+```
+
 # changelog
 - V 3.0 支持 @SchemaFilter 直接支持按照指定的schema过滤返回给客户端的结果,schema 参考 https://www.npmjs.com/package/json-filter2
 - v 4.0 使用 reflect-metadata 重新实现metadata信息

@@ -7,11 +7,14 @@
 import {Service} from "../../../core/decorator";
 
 
+
 @Service()
 export class Test {
     private a: string;
+    public b: string = 'x';
     constructor() {
         this.a = 'hello world';
+        this.b = 'hello';
     }
 
     asyHello() {

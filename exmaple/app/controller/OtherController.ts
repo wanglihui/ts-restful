@@ -5,7 +5,8 @@
 
 'use strict';
 import {AbstractController} from "../../../core/AbstractController";
-import {Restful} from "../../../core/decorator";
+import {Restful, ResponseBody, RequestMapping} from "../../../core/decorator";
+import { Api } from '../../../core/swagger';
 
 @Restful
 export class OtherController extends AbstractController {
@@ -14,7 +15,10 @@ export class OtherController extends AbstractController {
         return /^\d+$/.test(id);
     }
 
-    get(req, res, next) {
-        res.send("other get");
+    @Api("获取用户信息", "通过用户ID获取单条用户信息")
+    @ResponseBody()
+    @RequestMapping('/user')
+    getUser(ctx: any) { 
+        return {}
     }
 }

@@ -34,7 +34,8 @@ var router = express.Router();
 if (group) { 
     console.log(`启用分组:${group}`)
 }
-registerControllerToRouter(router, { isShowUrls: true, kebabCase: true, group: group });
+
+registerControllerToRouter(router, { isShowUrls: true, kebabCase: true, group: group, swagger: true });
 app.use('/api/v1', router);
 
 server.on('listening', (err) => {

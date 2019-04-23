@@ -1,3 +1,4 @@
+import { Test3, X } from './../model/Test3';
 /**
  * Created by wlh on 2017/9/16.
  */
@@ -5,7 +6,7 @@
 
 'use strict';
 import {Test} from "../model/Test";
-import {Restful, Router, RequestMapping, Autowire} from "../../../core/decorator";
+import {Restful, Router, RequestMapping, Autowire, Doc, ResponseBody} from "../../../core/decorator";
 import {AbstractController} from "../../../core/AbstractController";
 
 @Restful('/test-1')
@@ -27,11 +28,19 @@ export class TestController extends AbstractController{
         res.send(this.test.asyHello());
     }
 
-    get(req, res, next) {
-        res.send("/get");
+    @Doc("返回单条信息")
+    @ResponseBody()
+    get(ctx: any) : X{
+        return new X();
+        // return new Test3();
     }
 
-    find(req, res, next) {
-        res.send("/find");
+    @Doc("返回列表信息")
+    @ResponseBody()
+    find(ctx: any): Test3 {
+        // res.send("/find");
+        const test3 = new Test3();
+        console.log(test3);
+        return test3;
     }
 }

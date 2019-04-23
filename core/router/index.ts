@@ -1,4 +1,4 @@
-import { URL_KEY, METHOD_KEY, DOC_KEy, SCHEMA_KEY, GROUP_KEY } from './../constant';
+import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY } from './../constant';
 /**
  * Created by wlh on 2017/8/29.
  */
@@ -8,6 +8,8 @@ import {getControllers} from "../decorator";
 import express = require("express");
 import _ = require("lodash");
 import 'reflect-metadata';
+import { swagger as swaggerObj} from '../swagger';
+import * as swagger from '../swagger';
 
 export interface RegisterControllerOptions {
     /**
@@ -48,6 +50,39 @@ export interface RegisterControllerOptions {
      * 是否开启日志，记录请求
      */
     logging?: boolean;
+    /**
+     * 是否开启swagger文档
+     */
+    swagger?: boolean;
+}
+
+export function getDefaultUrl(fnName: string) { 
+    if (fnName == 'get') {
+        return '/:id';
+    }
+    if (fnName == 'update') {
+        return '/:id';
+    }
+    if (fnName == 'delete') {
+        return '/:id';
+    }
+    return '/';
+}
+
+export function getDefaultMethod(fnName: string) { 
+    if (fnName == 'get') {
+        return 'get';
+    }
+    if (fnName == 'update') {
+        return 'put';
+    }
+    if (fnName == 'delete') {
+        return 'delete';
+    }
+    if (fnName == 'add') { 
+        return 'post';
+    }
+    return 'get';
 }
 
 export function registerControllerToRouter(router: express.Router, options?: RegisterControllerOptions) {
@@ -82,7 +117,7 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
         }
 
         methods = methods.filter((fnName) => {
-            const url = Reflect.getMetadata(URL_KEY, cls, fnName)
+            const url = Reflect.getMetadata(URL_KEY, cls, fnName);
             return ['get', 'update', 'delete', 'add', 'find'].indexOf(fnName) >= 0
                 || (typeof cls[fnName] == 'function' && url);
         });
@@ -91,35 +126,21 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
             let curUrl = url;
             let method = 'get';
 
-            if (fnName == 'get') {
-                curUrl += '/:id'
-            }
-
-            if (fnName == 'update') {
-                curUrl += '/:id';
-                method = 'put';
-            }
-
-            if (fnName == 'delete') {
-                curUrl += '/:id';
-                method = 'delete';
-            }
-
-            if (fnName == 'add') {
-                method = 'post';
-            }
-
             let fn = cls[fnName];
             if (Reflect.hasMetadata(URL_KEY, cls, fnName)) {
                 curUrl += Reflect.getMetadata(URL_KEY, cls, fnName);
+            } else { 
+                curUrl += getDefaultUrl(fnName);
             }
 
             if (Reflect.hasMetadata(METHOD_KEY, cls, fnName)) {
                 method = Reflect.getMetadata(METHOD_KEY, cls, fnName)
+            } else { 
+                method = getDefaultMethod(fnName);
             }
             let methodDoc = '';
-            if (Reflect.hasMetadata(DOC_KEy, cls, fnName)) {
-                methodDoc = Reflect.getMetadata(DOC_KEy, cls, fnName)
+            if (Reflect.hasMetadata(DOC_KEY, cls, fnName)) {
+                methodDoc = Reflect.getMetadata(DOC_KEY, cls, fnName)
             }
             let schema = null;
             if (Reflect.hasMetadata(SCHEMA_KEY, cls, fnName)) {
@@ -134,6 +155,33 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
             urls.push({ url: method.toUpperCase() + '  ' + curUrl + '  ' + methodDoc, schema: schema });
+            if (!options.swagger) { 
+                return;
+            }
+            //以下是生成swagger文档，如果没有开启生成文档，下面代码将不执行
+            const returnType = Reflect.getMetadata("design:returntype", cls, fnName);
+            let swaggerSchema: any = {
+                type: returnType && returnType.name.toLowerCase(),
+            }
+            if (returnType && ['String', 'Boolean', 'Array', 'undefined', 'Number'].indexOf(returnType.name) < 0) { 
+                swagger.defineModel(returnType);
+                swaggerSchema = {
+                    $ref: '#/definitions/' + returnType.name,
+                }
+            }
+            const doc: any = Reflect.getMetadata(API_KEY, cls, fnName);
+            swagger.definePath(curUrl, method, {
+                description: doc && doc.description || methodDoc,
+                summary: doc && doc.sumary || methodDoc,
+                operationId: Controller.name+'.' + fnName,
+                responses: {
+                    "200": {
+                        description: "",
+                        schema: swaggerSchema
+                    }
+                },
+                tags: [Controller.name],
+            })
         })
     }
 
@@ -142,6 +190,11 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
         router.all(urlsPath, wrapNextFn(function (req, res, next) {
             res.json(urls);
         }));
+    }
+    if (options && options.swagger) { 
+        router.all('/swagger', wrapNextFn(function (req, res, next) { 
+            res.json(swaggerObj);
+        }))
     }
     return router;
 }

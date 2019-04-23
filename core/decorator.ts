@@ -1,4 +1,4 @@
-import { URL_KEY, DOC_KEy, METHOD_KEY, GROUP_KEY, SCHEMA_KEY } from './constant';
+import { URL_KEY, DOC_KEY, METHOD_KEY, GROUP_KEY, SCHEMA_KEY } from './constant';
 /**
  * Created by wlh on 2017/8/28.
  */
@@ -14,8 +14,20 @@ const controllers = [];
 export function getControllers() {
     return controllers;
 }
-export interface RouterOptionInterface { 
+
+export type RouterOptionInterface = IDoc;
+
+export interface IDoc { 
     doc?: string;
+}
+
+export function Doc(doc: string | IDoc) { 
+    return function (target, propertyKey) { 
+        if (typeof doc !='string') { 
+            doc = doc.doc;
+        }
+        Reflect.defineMetadata(DOC_KEY, doc, target, propertyKey);
+    }
 }
 
 export function RequestMapping(url: string, method?: string | RouterOptionInterface, options?: RouterOptionInterface) { 
@@ -28,7 +40,7 @@ export function RequestMapping(url: string, method?: string | RouterOptionInterf
         Reflect.defineMetadata(URL_KEY, url, target, propertyKey);
         Reflect.defineMetadata(METHOD_KEY, method || defaultMethod, target, propertyKey);
         if (options && options.doc) { 
-            Reflect.defineMetadata(DOC_KEy, options && options.doc, target, propertyKey);
+            Reflect.defineMetadata(DOC_KEY, options && options.doc, target, propertyKey);
         }
     }
 }
@@ -47,7 +59,7 @@ export function Router(url: string, method?: string | RouterOptionInterface, opt
 
 const UUID_REG = /^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/;
 
-export function Restful(mountUrl?: string| any) : any {
+export function Restful(mountUrl?: string | any): any {
     const fn = function (target, url) {
         target.prototype.$isValidId = target.prototype.$isValidId || function (id) {
             return UUID_REG.test(id.toString());
