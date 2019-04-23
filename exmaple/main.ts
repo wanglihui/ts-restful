@@ -36,7 +36,10 @@ if (group) {
 }
 
 registerControllerToRouter(router, { isShowUrls: true, kebabCase: true, group: group, swagger: true });
+const router2 = express.Router();
+registerControllerToRouter(router2, { group: 'manager', swagger: true});
 app.use('/api/v1', router);
+app.use('/manager', router2);
 
 server.on('listening', (err) => {
     if (!err) {

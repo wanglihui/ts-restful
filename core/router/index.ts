@@ -180,7 +180,7 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
                         schema: swaggerSchema
                     }
                 },
-                tags: [Controller.name],
+                tags: [(group || '') + "." + Controller.name],
             })
         })
     }
@@ -193,10 +193,38 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
     }
     if (options && options.swagger) { 
         router.all('/swagger', wrapNextFn(function (req, res, next) { 
-            res.json(swaggerObj);
+            let obj: swagger.ISwagger = JSON.parse(JSON.stringify(swaggerObj));
+            cleanSwagger(options.group, obj);
+            res.json(obj);
         }))
     }
     return router;
+}
+
+const cacheSwaggerGroup: { [index: string]: swagger.ISwagger } = {};
+
+function cleanSwagger(group: string, swagger: swagger.ISwagger) { 
+    if (cacheSwaggerGroup[group]) { 
+        return cacheSwaggerGroup[group];
+    }
+    let paths = Object.keys(swagger.paths);
+    if (!group) { 
+        group = '.';
+    }
+    for (let p of paths) {
+        for (let method in swagger.paths[p]) {
+            if (!swagger.paths[p][method]) {
+                continue;
+            }
+            for (let t of swagger.paths[p][method].tags) {
+                if (t.indexOf(group)  !== 0) {
+                    delete swagger.paths[p][method]
+                }
+            }
+        }
+    }
+    cacheSwaggerGroup[group] = swagger;
+    return swagger;
 }
 
 function getAllMethods(Cls) {

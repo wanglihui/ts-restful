@@ -18,7 +18,20 @@ export class OtherController extends AbstractController {
     @Api("获取用户信息", "通过用户ID获取单条用户信息")
     @ResponseBody()
     @RequestMapping('/user')
-    getUser(ctx: any) { 
+    get(ctx: any) { 
         return {}
+    }
+
+    @Api("添加用户")
+    add(ctx: any) { 
+    }
+
+    @Api("获取列表")
+    find(ctx: any) { 
+    }
+
+    @Api("删除用户")
+    delete(ctx: any) { 
+
     }
 }

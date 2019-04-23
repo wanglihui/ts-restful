@@ -1,5 +1,5 @@
-import { Restful, ResponseBody } from '../../../';
-import { AbstractController } from '../../../';
+import { Restful, ResponseBody } from '../../../index';
+import { AbstractController } from '../../../index';
 
 @Restful()
 export class ResponseBodyController extends AbstractController { 
