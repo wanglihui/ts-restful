@@ -47,11 +47,21 @@
   - 自动注入Service
 - @Service 
   - 将一个class标记为service
+- @RequestBody @RequestBodyParam @RequestParam @HttpRequest @HttpResponse @QueryStringParam
+  - 自动注入函数参数 
+  - @RequestBody 注入 req.body, 
+  - @RequestBodyParam 注入 req.body.[参数名]
+  - @RequestParam 注入 req.param.[参数名]
+  - @QueryStringParam 注入  req.query.[参数名]
+  - @HttpRequest 注入 req
+  - @HttpResponse 注入 response
 
 ### 使用
 ---
 
 ###### tsconfig.json 中开启 emitDecorateMetadata
+
+- 注意: 5.0 后不推荐直接使用 req, res 等，推荐使用 @RequestBody @RequestParam 等获取参数，方便生成文档
 
 ```javascript
 // router/index.ts 
@@ -141,7 +151,7 @@ export class TestController extends AbstractController {
 ```
 
 ### @RequestBody @RequestBodyParam @QueryStringParam @HttpRequest @HttpRepsonse
-```
+```javascript
 @Restful()
 export class TestController {
 
