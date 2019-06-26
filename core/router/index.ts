@@ -1,4 +1,4 @@
-import { ISwaggerParam } from './../../dist/core/swagger.d';
+import { ISwaggerParam } from '../swagger';
 import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL } from './../constant';
 /**
  * Created by wlh on 2017/8/29.
