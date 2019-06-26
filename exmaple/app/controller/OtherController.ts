@@ -5,8 +5,9 @@
 
 'use strict';
 import {AbstractController} from "../../../core/AbstractController";
-import {Restful, ResponseBody, RequestMapping} from "../../../core/decorator";
+import {Restful, ResponseBody, RequestMapping, QueryStringParam, HttpRequest} from "../../../core/decorator";
 import { Api } from '../../../core/swagger';
+import { Request} from 'express-serve-static-core';
 
 @Restful
 export class OtherController extends AbstractController {
@@ -27,11 +28,22 @@ export class OtherController extends AbstractController {
     }
 
     @Api("获取列表")
-    find(ctx: any) { 
+    find(ctx: any) {
+        return [];
     }
 
     @Api("删除用户")
     delete(ctx: any) { 
 
+    }
+
+    @RequestMapping('/test-property-decorate')
+    testPropertyDecorate(@QueryStringParam test: any) { 
+        return test;
+    }
+
+    @RequestMapping("/test-inject-request")
+    testInjectRequest(@HttpRequest req: Request) { 
+        return req.query;
     }
 }

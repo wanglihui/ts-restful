@@ -1,4 +1,5 @@
-import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY } from './../constant';
+import { ISwaggerParam } from './../../dist/core/swagger.d';
+import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL } from './../constant';
 /**
  * Created by wlh on 2017/8/29.
  */
@@ -147,6 +148,49 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
                 schema = Reflect.getMetadata(SCHEMA_KEY, cls, fnName)
             }
 
+            //赋值 @RequestBody, @QueryStringParam @RequestParam @Request @Response 值
+            let oldFn = fn;
+            const paramNames = getFnParamNames(oldFn);
+            const paramTypes = Reflect.getMetadata("design:paramtypes", cls, fnName);
+            fn = function (req, res, next) { 
+                //解析RequestGet
+                let arr = arguments;
+                [REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL].forEach((symbol) => {
+                    let needValues: number[] = Reflect.getMetadata(symbol, cls, fnName) || [];
+                    let value: any = undefined;
+                    needValues.map((idx) => {
+                        let paramName = paramNames[idx];
+                        switch (symbol) {
+                            case REQUEST_BODY_SYMBOL:
+                                value = req.body;
+                                break;
+                            case REQUEST_GET_SYMBOL:
+                                value = req.query[paramName];
+                                break;
+                            case REQUEST_PARAM_SYMBOL:
+                                value = req.params[paramName];
+                                break;
+                            case REQUEST_BODY_PARAM_SYMBOL:
+                                value = req.body[paramName];
+                                break;
+                            case REQUEST_SYMBOL:
+                                value = req;
+                                break;
+                            case RESPONSE_SYMBOL:
+                                value = res;
+                                break;
+                            default:
+                                throw new Error("not support!");
+                        }
+                        arr[idx] = value;
+                    });
+                });
+                let ret = oldFn.apply(cls, arr);
+                if (ret && ret.then && typeof ret.then == 'function') { 
+                    return ret.then((ret) => { res.json(ret) }).catch(next);
+                }
+                return res.json(ret);
+            }
             //验证ID是否合法
             fn = wrapVerifyIdFn.bind(cls)(fn);
             //统一处理async错误
@@ -170,7 +214,15 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
                 }
             }
             const doc: any = Reflect.getMetadata(API_KEY, cls, fnName);
+            const paramters = paramNames.map((val, index) => { 
+                return {
+                    name: val,
+                    required: true,
+                    type: paramTypes && paramTypes.length > index && paramTypes[index],
+                } as ISwaggerParam;
+            })
             swagger.definePath(curUrl, method, {
+                parameters: paramters,
                 description: doc && doc.description || methodDoc,
                 summary: doc && doc.sumary || methodDoc,
                 operationId: Controller.name+'.' + fnName,
@@ -275,4 +327,13 @@ function wrapNextFn(fn) {
             console.log(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
         }
     }
+}
+
+function getFnParamNames(fn: Function) { 
+    let reg = /\(([^)]+)\)/i;
+    var groups = reg.exec(fn.toString());
+    if (!groups) {
+        return [];
+    }
+    return groups[1].split(",");
 }

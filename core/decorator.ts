@@ -1,4 +1,4 @@
-import { URL_KEY, DOC_KEY, METHOD_KEY, GROUP_KEY, SCHEMA_KEY } from './constant';
+import { URL_KEY, DOC_KEY, METHOD_KEY, GROUP_KEY, SCHEMA_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL } from './constant';
 /**
  * Created by wlh on 2017/8/28.
  */
@@ -198,7 +198,78 @@ function _scan(dir: string, ignores?: (string | RegExp)[]) {
     }
 }
 
+/**
+ * 扫描文件夹，初始化 装饰器设置
+ * @param dir 
+ * @param ignores 
+ */
 export function scannerDecoration(dir: string, ignores?: (string|RegExp)[]) {
     _scan(dir, ignores);
 }
 
+type propertyDecorateType = Symbol; //(REQUEST_BODY_SYMBOL | REQUEST_GET_SYMBOL | REQUEST_PARAM_SYMBOL);
+function propertyDecorate(target, propertyName, paramterIndex, type: propertyDecorateType) { 
+    const existValue = Reflect.getMetadata(type, target, propertyName) || [];
+    existValue.push(paramterIndex);
+    Reflect.defineMetadata(type, existValue, target, propertyName);
+}
+
+/**
+ * 将request body 值赋值给参数
+ * @param target 
+ * @param propertyName 
+ * @param paramterIndex 
+ */
+export function RequestBody(target: any, propertyName: string | symbol, paramterIndex: number) {
+    return propertyDecorate(target, propertyName, paramterIndex, REQUEST_BODY_SYMBOL);
+} 
+
+/**
+ * 获取URL中占位符参数
+ * @param target 
+ * @param propertyName 
+ * @param paramterIndex 
+ */
+export function RequestParam(target: any, propertyName: string | symbol, paramterIndex: number) { 
+    return propertyDecorate(target, propertyName, paramterIndex, REQUEST_PARAM_SYMBOL);
+}
+
+/**
+ * 获取 QUERY STRING 参数
+ * @param target 
+ * @param propertyName 
+ * @param paramterIndex 
+ */
+export function QueryStringParam(target: any, propertyName: string | symbol, paramterIndex: number) { 
+    return propertyDecorate(target, propertyName, paramterIndex, REQUEST_GET_SYMBOL);
+}
+
+/**
+ * 从 REQUEST Body中获取参数
+ * @param target 
+ * @param propertyName 
+ * @param paramterIndex 
+ */
+export function RequestBodyParam(target: any, propertyName: string | symbol, paramterIndex: number) { 
+    return propertyDecorate(target, propertyName, paramterIndex, REQUEST_BODY_PARAM_SYMBOL);
+}
+
+/**
+ * 注入 Request
+ * @param target 
+ * @param propertyName 
+ * @param paramterIndex 
+ */
+export function HttpRequest(target: any, propertyName: string | symbol, paramterIndex: number) { 
+    return propertyDecorate(target, propertyName, paramterIndex, REQUEST_SYMBOL);
+}
+
+/**
+ * 注入 Response
+ * @param target 
+ * @param propertyName 
+ * @param paramterIndex 
+ */
+export function HttpResponse(target: any, propertyName: string | symbol, paramterIndex: number) { 
+    return propertyDecorate(target, propertyName, paramterIndex, RESPONSE_SYMBOL);
+}
