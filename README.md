@@ -140,6 +140,30 @@ export class TestController extends AbstractController {
     }
 ```
 
+### @RequestBody @RequestBodyParam @QueryStringParam @HttpRequest @HttpRepsonse
+```
+@Restful()
+export class TestController {
+
+    @PostMapping("/test")
+    async test(@RequestBody test: Test) {
+        return test;
+    }
+
+    @GetMapping("/test2)
+    async test2(@QueryStringParam keyword: string, @QueryString password: string) {
+        return {keyword, password};
+    }
+
+    @PostMapping("/test3)
+    async test3(@HttpRequest req: Request) {
+        let body = req.body;
+        return body;
+    }
+    
+}
+```
+
 ## [自动生成文档](./swagger.md)
 ```
      自动生成文档还有若干问题,正在解决
