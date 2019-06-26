@@ -1,10 +1,18 @@
 # restful
 ---
+
+###### 这个模块主要做那些事情
+- 根据约定自动扫描controller生成路由
+- 依赖注入
+- 函数参数自动注入
+- 综上：减少模板代码，使项目代码更宜都
+
 ```
     当我们使用 nodejs express开发web项目时,是否写了很多 路由和 controller 映射的代码？我们的路由规则是否是按照restful规范去实现的呢？
     ts-express-restful帮你去简化路由与controller映射的样板代码，如果按照restfu规范，你只需要关注资源提供方式，剩下的交给ts-express-restful.
     当然如果你想自定义路由也很简单，只需要简单一句注解就好，感谢spring mvc 给了我很大的参考。
 ```    
+
 
 ### Router与Controller自动映射逻辑
 ---
