@@ -149,3 +149,4 @@ export class TestController extends AbstractController {
 - V 3.0 支持 @SchemaFilter 直接支持按照指定的schema过滤返回给客户端的结果,schema 参考 https://www.npmjs.com/package/json-filter2
 - v 4.0 使用 reflect-metadata 重新实现metadata信息
 - v 4.0 重新实现 @Service @Autowire
+- v 5.0 支持 @RequestBody @RequestBodyParam @RequestParam @QueryStringParam @HttpRequest @HttpResponse 自动注入到controller函数的参数
