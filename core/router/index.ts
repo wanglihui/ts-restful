@@ -335,5 +335,7 @@ function getFnParamNames(fn: Function) {
     if (!groups) {
         return [];
     }
-    return groups[1].split(",");
+    return groups[1].split(",").map((param) => {
+        return param.replace(/\s/g, '');
+    });
 }
