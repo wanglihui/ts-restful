@@ -1,7 +1,12 @@
 # restful
----
 
-###### 这个模块主要做那些事情
+### 快速使用
+
+- 为了简化ts-express-restful 模块使用，实现了一个[restful-started](https://www.npmjs.com/package/restful-started) 模块，使用默认配置，一句启动项目.
+
+
+### 这个模块主要做那些事情
+
 - 根据约定自动扫描controller生成路由
 - 依赖注入
 - 函数参数自动注入
@@ -168,12 +173,12 @@ export class TestController {
         return test;
     }
 
-    @GetMapping("/test2)
+    @GetMapping("/test2")
     async test2(@QueryStringParam keyword: string, @QueryString password: string) {
         return {keyword, password};
     }
 
-    @PostMapping("/test3)
+    @PostMapping("/test3")
     async test3(@HttpRequest req: Request) {
         let body = req.body;
         return body;
