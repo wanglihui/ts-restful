@@ -82,11 +82,15 @@ export function Restful(mountUrl?: string | any): any {
     }
 }
 
+export const groups = [];
 /**
  * 支持Controller分组
  * @param groupName 分组名称
  */
 export function Group(groupName: string) { 
+    if (groupName && groups.indexOf(groupName) < 0) { 
+        groups.push(groupName);
+    }
     return function (target) { 
         if (!Reflect.hasMetadata(GROUP_KEY, target)) {
             Reflect.defineMetadata(GROUP_KEY, [], target);
