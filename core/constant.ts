@@ -11,3 +11,4 @@ export const REQUEST_PARAM_SYMBOL = Symbol("$request_param");
 export const REQUEST_BODY_PARAM_SYMBOL = Symbol("$request_body_param");
 export const REQUEST_SYMBOL = Symbol("$request");
 export const RESPONSE_SYMBOL = Symbol("$response");
+export const NEXT_SYMBOL = Symbol("$next");
