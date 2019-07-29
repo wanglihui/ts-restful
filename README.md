@@ -52,7 +52,7 @@
   - 主要是用于验证此controller 的ID风格，如果此函数返回false，则不是ID
 - (controller instance).$before
   -  调用Controller的每个函数之前会先调用$before函数，此函数中可以做一些权限校验或者数据统一
-- @ResponseBody() 
+- <del>@ResponseBody()</del> 直接在函数中return默认将结果输出
   - 直接将函数返回内容作为response相应内容
 - @SchemaFilter(schema: any, checkType: boolean) 
   - 按照schema指定的格式过滤返回结果, checkType 如果不指定或者未true，将严格检查响应的类型是否和指定的schema类型匹配
@@ -60,7 +60,7 @@
   - 自动注入Service
 - @Service 
   - 将一个class标记为service
-- @RequestBody @RequestBodyParam @RequestParam @HttpRequest @HttpResponse @QueryStringParam
+- <del>@RequestBody</del> @RequestBodyParam @RequestParam @HttpRequest @HttpResponse @QueryStringParam
   - 自动注入函数参数 
   - @RequestBody 注入 req.body, 
   - @RequestBodyParam 注入 req.body.[参数名]
@@ -88,11 +88,20 @@ import express = require("express");
 var router = express.Router();
 
 scannerControllers(path.join(__dirname, 'controller'));
+//挂载到express
 registerControllerToRouter(router);
+
 
 export async function initHttp(app) {
     app.use('/api/v1', router);
 }
+
+//或者挂载到koa
+// import * as Router from 'koa-router';
+// var app = new Koa();
+// var route = new Router();
+//registerControllerToKoaRouter(router);
+// app.use(route.routes());
 ```
 
 ```javascript
@@ -125,17 +134,6 @@ export class TestController extends AbstractController {
     @Router("/other")
     async other(req, res, next) {
         res.send("other");
-    }
-
-    //调用ResponseBody
-    @Router("/responseBody")
-    @ResponseBody()
-    async responseBody(ctx) {
-        let id = ctx.req.params.id;
-        return this.reply(0, {
-            id,
-            name: "Restful Test"
-        })
     }
 }
 ```
