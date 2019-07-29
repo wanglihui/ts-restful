@@ -1,7 +1,7 @@
 # restful
 
 ### 快速使用
-
+- 支持express和KOA
 - 为了简化ts-express-restful 模块使用，实现了一个[restful-started](https://www.npmjs.com/package/restful-started) 模块，使用默认配置，一句启动项目.
 
 
