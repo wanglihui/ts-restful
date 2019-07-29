@@ -5,7 +5,7 @@
 
 'use strict';
 import {AbstractController} from "../../../core/AbstractController";
-import {Restful, ResponseBody, RequestMapping, QueryStringParam, HttpRequest} from "../../../core/decorator";
+import {Restful, RequestMapping, QueryStringParam, HttpRequest} from "../../../core/decorator";
 import { Api } from '../../../core/swagger';
 import { Request} from 'express-serve-static-core';
 
@@ -17,7 +17,6 @@ export class OtherController extends AbstractController {
     }
 
     @Api("获取用户信息", "通过用户ID获取单条用户信息")
-    @ResponseBody()
     @RequestMapping('/user')
     get(ctx: any) { 
         return {}

@@ -1,10 +1,9 @@
-import { Restful, RequestMapping, PostMapping, ResponseBody } from '../../../core/decorator';
+import { Restful, RequestMapping, PostMapping } from '../../../core/decorator';
 
 @Restful('/test2')
 export default class Test2Controller { 
 
     @RequestMapping('/:id', {doc: "返回一个字符串"})
-    @ResponseBody()
     get(ctx: { req: any, res: any }) :string { 
         return 'test';
     }

@@ -1,5 +1,5 @@
 import { ISwaggerParam } from '../swagger';
-import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL } from './../constant';
+import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL, NEXT_SYMBOL } from './../constant';
 /**
  * Created by wlh on 2017/8/29.
  */
@@ -55,6 +55,10 @@ export interface RegisterControllerOptions {
      * 是否开启swagger文档
      */
     swagger?: boolean;
+    /**
+     * 绑定的路由是否是KOA 路由，默认为false
+     */
+    isKoaRouter?: boolean;
 }
 
 export function getDefaultUrl(fnName: string) { 
@@ -86,7 +90,13 @@ export function getDefaultMethod(fnName: string) {
     return 'get';
 }
 
-export function registerControllerToRouter(router: express.Router, options?: RegisterControllerOptions) {
+export function registerControllerToKoaRouter(router: any, options?: RegisterControllerOptions) {
+    options = Object.assign({}, options);
+    options.isKoaRouter = true;
+    return registerControllerToRouter(router, options);
+}
+
+export function registerControllerToRouter(router: express.Router | any, options?: RegisterControllerOptions) {
     let controllers = getControllers();
     let urls = [];
     for (let Controller of controllers) { 
@@ -155,7 +165,7 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
             fn = function (req, res, next) { 
                 //解析RequestGet
                 let arr = arguments;
-                [REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL].forEach((symbol) => {
+                [NEXT_SYMBOL, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL].forEach((symbol) => {
                     let needValues: number[] = Reflect.getMetadata(symbol, cls, fnName) || [];
                     let value: any = undefined;
                     needValues.map((idx) => {
@@ -179,6 +189,9 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
                             case RESPONSE_SYMBOL:
                                 value = res;
                                 break;
+                            case NEXT_SYMBOL:
+                                value = next;
+                                break;
                             default:
                                 throw new Error("not support!");
                         }
@@ -186,15 +199,14 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
                     });
                 });
                 let ret = oldFn.apply(cls, arr);
-                if (ret && ret.then && typeof ret.then == 'function') { 
-                    return ret.then((ret) => { res.json(ret) }).catch(next);
-                }
-                return res.json(ret);
+                return ret;
             }
-            //验证ID是否合法
-            fn = wrapVerifyIdFn.bind(cls)(fn);
-            //统一处理async错误
-            fn = wrapNextFn.bind(cls)(fn);
+            //挂在的URL中存在/:id or /:id/ 时启用ID验证
+            if (curUrl.indexOf("/:id") >= 0 || curUrl.indexOf("/:id/") >= 0) {
+                fn = wrapVerifyIdFn.bind(cls)(fn);
+            }
+            //统一处理async错误，和返回的数据
+            fn = wrapNextFn.bind(cls)(fn, options.isKoaRouter);
 
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
@@ -239,16 +251,16 @@ export function registerControllerToRouter(router: express.Router, options?: Reg
 
     if (options && options.isShowUrls) {
         let urlsPath = options.urlsPath || '/~urls';
-        router.all(urlsPath, wrapNextFn(function (req, res, next) {
-            res.json(urls);
-        }));
+        router.all(urlsPath, wrapNextFn(function(req, res, next) {
+            return urls;
+        }, options.isKoaRouter));
     }
     if (options && options.swagger) { 
         router.all('/swagger', wrapNextFn(function (req, res, next) { 
             let obj: swagger.ISwagger = JSON.parse(JSON.stringify(swaggerObj));
             obj = cleanSwagger(options.group, obj);
-            res.json(obj);
-        }))
+            return obj;
+        }, options.isKoaRouter))
     }
     return router;
 }
@@ -293,24 +305,55 @@ function getAllMethods(Cls) {
 
 function wrapVerifyIdFn(fn) {
     let self = this;
-    return (req, res, next) => {
+    return async (req, res, next) => {
         let id = req.params.id;
         if (!id) {
             return fn.bind(self)(req, res, next);
         }
         if (!self.$isValidId.bind(self)(id)) {
+            //执行下次匹配
             if (next && typeof next == 'function') {
                 return next();
             }
-            return res.send('Invalid Id');
+            throw new Error("Invalid ID");
         }
         return fn.bind(self)(req, res, next)
     }
 
 }
 
-function wrapNextFn(fn) {
+function wrapKoaNextFn(fn) {
     let self = this;
+    return async(ctx, next) => {
+        let {req, res} = ctx;
+        let label = req.url;
+        let beginTime = process.hrtime();
+        req.params = ctx.params;
+        req.body = ctx.body;
+        req.query = ctx.query;
+        try {
+            let ret = fn.bind(self)(req, res, next);
+            if (ret) {
+                ret = await ret;
+            }
+            if (ret) {
+                ctx.body = ret;
+            }
+        } catch(err) {
+            ctx.throw(err);
+        } finally {
+            let diff = process.hrtime(beginTime);
+            console.log(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
+        }
+    }
+}
+
+function wrapNextFn(fn, isKoaRouter: boolean = false) {
+    let self = this;
+    if (isKoaRouter) {
+        return wrapKoaNextFn(fn).bind(self);
+    }
+
     return async (req, res, next) => {
         let label = req.url;
         let beginTime = process.hrtime();
@@ -318,8 +361,8 @@ function wrapNextFn(fn) {
             let ret = fn.bind(self)(req, res, next);
             if (ret) { 
                 ret = await ret;
+                res.json(ret);
             }
-            return ret;
         } catch (err) { 
             return next(err);
         } finally { 

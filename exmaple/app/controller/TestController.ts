@@ -6,7 +6,7 @@ import { Test3, X } from './../model/Test3';
 
 'use strict';
 import {Test} from "../model/Test";
-import {Restful, Router, RequestMapping, Autowire, Doc, ResponseBody} from "../../../core/decorator";
+import {Restful, Router, RequestMapping, Autowire, Doc} from "../../../core/decorator";
 import {AbstractController} from "../../../core/AbstractController";
 
 @Restful('/test-1')
@@ -29,14 +29,12 @@ export class TestController extends AbstractController{
     }
 
     @Doc("返回单条信息")
-    @ResponseBody()
     get(ctx: any) : X{
         return new X();
         // return new Test3();
     }
 
     @Doc("返回列表信息")
-    @ResponseBody()
     find(ctx: any): Test3 {
         // res.send("/find");
         const test3 = new Test3();

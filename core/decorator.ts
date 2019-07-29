@@ -109,21 +109,6 @@ export interface ResponseBodyFunc {
     (ctx: ContextInterface): Promise<Object>;
 }
 
-export function ResponseBody() { 
-    return  function (target, propertyKey, desc) { 
-        let fn: ResponseBodyFunc = desc.value;
-        desc.value = async function(req, res, next) {
-            let ctx = {
-                req,
-                res,
-                next,
-            }
-            let ret = await fn.bind(this)(ctx);
-            return res.json(ret);
-        }
-    }
-}
-
 export function SchemaFilter(schema: { [index: string]: any }, checkType: boolean = true) { 
     return function (target, propertyKey: string, desc) { 
         let fn = desc.value;

@@ -1,4 +1,4 @@
-import { Restful, ResponseBody } from '../../../index';
+import { Restful } from '../../../index';
 import { AbstractController } from '../../../index';
 
 @Restful()
@@ -12,7 +12,6 @@ export class ResponseBodyController extends AbstractController {
         return true;
     }
 
-    @ResponseBody()
     async get(ctx): Promise<any> { 
         console.log(this)
         let ret = this.reply(0, {
