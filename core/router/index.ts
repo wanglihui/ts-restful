@@ -99,6 +99,9 @@ export function registerControllerToKoaRouter(router: any, options?: RegisterCon
 export function registerControllerToRouter(router: express.Router | any, options?: RegisterControllerOptions) {
     let controllers = getControllers();
     let urls = [];
+    if (!options) {
+        options = {};
+    }
     for (let Controller of controllers) { 
         let url = Reflect.getMetadata(URL_KEY, Controller);
         //如果已经启用分组,controller没有分组名称的直接跳过
