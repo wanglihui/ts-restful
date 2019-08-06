@@ -213,6 +213,7 @@ export function registerControllerToRouter(router: express.Router | any, options
 
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
+            console.log(method, curUrl)
             urls.push({ url: method.toUpperCase() + '  ' + curUrl + '  ' + methodDoc, schema: schema });
             if (!options.swagger) { 
                 return;
@@ -299,7 +300,12 @@ function getAllMethods(Cls) {
     let prototype = Cls.prototype;
     do {
         if (prototype) {
-            methods = methods.concat(Object.getOwnPropertyNames(prototype));
+            let keys = Object.getOwnPropertyNames(prototype);
+            for(let key of keys) {
+                if (methods.indexOf(key) < 0) {
+                    methods.push(key);
+                }
+            }
         }
         prototype = Object.getPrototypeOf(prototype)
     } while(prototype);
