@@ -12,6 +12,10 @@ import 'reflect-metadata';
 import { swagger as swaggerObj} from '../swagger';
 import * as swagger from '../swagger';
 
+const respFormat = async function(data: any) {
+    return data;
+}
+
 export interface RegisterControllerOptions {
     /**
      * 是否显示挂载的URL
@@ -59,6 +63,10 @@ export interface RegisterControllerOptions {
      * 绑定的路由是否是KOA 路由，默认为false
      */
     isKoaRouter?: boolean;
+    /**
+     * 格式化输出结果
+     */
+    respFormat?: (data: any) => Promise<any>;
 }
 
 export function getDefaultUrl(fnName: string) { 
@@ -101,6 +109,9 @@ export function registerControllerToRouter(router: express.Router | any, options
     let urls = [];
     if (!options) {
         options = {};
+    }
+    if (!options.respFormat) {
+        options.respFormat = respFormat;
     }
     for (let Controller of controllers) { 
         let url = Reflect.getMetadata(URL_KEY, Controller);
@@ -209,7 +220,7 @@ export function registerControllerToRouter(router: express.Router | any, options
                 fn = wrapVerifyIdFn.bind(cls)(fn);
             }
             //统一处理async错误，和返回的数据
-            fn = wrapNextFn.bind(cls)(fn, options.isKoaRouter);
+            fn = wrapNextFn.bind(cls)(fn, options.isKoaRouter, options.respFormat);
 
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
@@ -257,14 +268,14 @@ export function registerControllerToRouter(router: express.Router | any, options
         let urlsPath = options.urlsPath || '/~urls';
         router.all(urlsPath, wrapNextFn(function(req, res, next) {
             return urls;
-        }, options.isKoaRouter));
+        }, options.isKoaRouter, respFormat));
     }
     if (options && options.swagger) { 
         router.all('/swagger', wrapNextFn(function (req, res, next) { 
             let obj: swagger.ISwagger = JSON.parse(JSON.stringify(swaggerObj));
             obj = cleanSwagger(options.group, obj);
             return obj;
-        }, options.isKoaRouter))
+        }, options.isKoaRouter, respFormat));
     }
     return router;
 }
@@ -331,7 +342,7 @@ function wrapVerifyIdFn(fn) {
 
 }
 
-function wrapKoaNextFn(fn) {
+function wrapKoaNextFn(fn, respFormat: Function) {
     let self = this;
     return async(ctx, next) => {
         let {req, res} = ctx;
@@ -345,6 +356,7 @@ function wrapKoaNextFn(fn) {
             if (ret) {
                 ret = await ret;
             }
+            ret = await respFormat(ret);
             if (ret) {
                 ctx.body = ret;
             }
@@ -357,10 +369,10 @@ function wrapKoaNextFn(fn) {
     }
 }
 
-function wrapNextFn(fn, isKoaRouter: boolean = false) {
+function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function) {
     let self = this;
     if (isKoaRouter) {
-        return wrapKoaNextFn(fn).bind(self);
+        return wrapKoaNextFn(fn, respFormat).bind(self);
     }
 
     return async (req, res, next) => {
@@ -370,6 +382,7 @@ function wrapNextFn(fn, isKoaRouter: boolean = false) {
             let ret = fn.bind(self)(req, res, next);
             if (ret) { 
                 ret = await ret;
+                ret = await respFormat(ret);
                 res.json(ret);
             }
         } catch (err) { 
