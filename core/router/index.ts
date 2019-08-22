@@ -178,7 +178,7 @@ export function registerControllerToRouter(router: express.Router | any, options
             const paramTypes = Reflect.getMetadata("design:paramtypes", cls, fnName);
             fn = function (req, res, next) { 
                 //解析RequestGet
-                let arr = arguments;
+                let arr = Array.from(arguments);
                 [NEXT_SYMBOL, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL].forEach((symbol) => {
                     let needValues: number[] = Reflect.getMetadata(symbol, cls, fnName) || [];
                     let value: any = undefined;
