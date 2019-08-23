@@ -1,4 +1,4 @@
-import { URL_KEY, DOC_KEY, METHOD_KEY, GROUP_KEY, SCHEMA_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL, NEXT_SYMBOL } from './constant';
+import { URL_KEY, DOC_KEY, METHOD_KEY, GROUP_KEY, SCHEMA_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL, NEXT_SYMBOL, HEADER_SYMBOL, COOKIE_SYMBOL } from './constant';
 /**
  * Created by wlh on 2017/8/28.
  */
@@ -271,4 +271,12 @@ export function HttpResponse(target: any, propertyName: string | symbol, paramte
  */
 export function NextFunction(target: any, propertyName: string | symbol, paramterIndex: number) { 
     return propertyDecorate(target, propertyName, paramterIndex, NEXT_SYMBOL);
+}
+
+export function Header(target: any, propertyName: string | symbol, paramterIndex: number) {
+    return propertyDecorate(target, propertyName, paramterIndex, HEADER_SYMBOL);
+}
+
+export function Cookie(target: any, propertyName: string| symbol, paramterIndex: number) {
+    return propertyDecorate(target, propertyName, paramterIndex, COOKIE_SYMBOL);
 }

@@ -14,10 +14,9 @@ export class ResponseBodyController extends AbstractController {
 
     async get(ctx): Promise<any> { 
         console.log(this)
-        let ret = this.reply(0, {
+        return {
             id: "1",
             name: "王大拿"
-        })
-        return ret;
+        }
     }
 }

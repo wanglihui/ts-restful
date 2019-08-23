@@ -1,5 +1,5 @@
 import { ISwaggerParam } from '../swagger';
-import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL, NEXT_SYMBOL } from './../constant';
+import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL, NEXT_SYMBOL, HEADER_SYMBOL, COOKIE_SYMBOL } from './../constant';
 /**
  * Created by wlh on 2017/8/29.
  */
@@ -206,8 +206,14 @@ export function registerControllerToRouter(router: express.Router | any, options
                             case NEXT_SYMBOL:
                                 value = next;
                                 break;
+                            case HEADER_SYMBOL:
+                                value = req.headers[paramName];
+                                break;
+                            case COOKIE_SYMBOL:
+                                value = req.cookies[paramName];
+                                break;
                             default:
-                                throw new Error("not support!");
+                                throw new Error(`not support, ${symbol.toString()} inject ${paramName}`);
                         }
                         arr[idx] = value;
                     });
