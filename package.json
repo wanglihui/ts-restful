@@ -5,7 +5,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "dist": "rm -rf dist && tsc",
-    "prepack": "rm -rf dist && tsc"
+    "prepack": "rm -rf dist && tsc",
+    "test": "npx mocha"
   },
   "author": "lihui.wang@jingli365.com",
   "repository": {

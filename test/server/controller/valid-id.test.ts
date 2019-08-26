@@ -10,7 +10,7 @@ describe("$isValidId", () => {
         .expect(200);
     })
 
-    it("$invalidId not match rule should return 404", async () => {
+    it.skip("$invalidId not match rule should return 404", async () => {
         return request(app)
         .get("/valid-id/not-found")
         // .then( (res) => {

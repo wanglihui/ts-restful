@@ -41,7 +41,6 @@ describe('inject param', () => {
         .expect(200)
         .then( (response) => {
             let ret = response.body;
-            console.log("=====>", ret);
             if (typeof ret == 'string') {
                 ret = JSON.parse(ret);
             }
@@ -57,7 +56,6 @@ describe('inject param', () => {
         .expect(200)
         .then( (response) => {
             let ret = response.body;
-            console.log("=====>", ret);
             if (typeof ret == 'string') {
                 ret = JSON.parse(ret);
             }
@@ -73,7 +71,6 @@ describe('inject param', () => {
         .expect(200)
         .then( (response) => {
             let ret = response.body;
-            console.log("=====>", ret);
             if (typeof ret == 'string') {
                 ret = JSON.parse(ret);
             }
@@ -89,7 +86,6 @@ describe('inject param', () => {
         .expect(200)
         .then( (response) => {
             let ret = response.body;
-            console.log("=====>", ret);
             if (typeof ret == 'string') {
                 ret = JSON.parse(ret);
             }
@@ -104,7 +100,6 @@ describe('inject param', () => {
         .expect(200)
         .then( (response) => {
             let ret = response.body;
-            console.log("=====>", ret);
             if (typeof ret == 'string') {
                 ret = JSON.parse(ret);
             }
