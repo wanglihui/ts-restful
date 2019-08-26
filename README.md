@@ -2,6 +2,23 @@
 
 [![CircleCI](https://circleci.com/gh/wanglihui/ts-restful.svg?style=svg)](https://circleci.com/gh/wanglihui/ts-restful)
 
+```
+------------------------|----------|----------|----------|----------|-------------------|
+File                    |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+------------------------|----------|----------|----------|----------|-------------------|
+All files               |    68.69 |    49.01 |    65.22 |    69.43 |                   |
+ ts-restful             |      100 |      100 |      100 |      100 |                   |
+  index.ts              |      100 |      100 |      100 |      100 |                   |
+ ts-restful/core        |     69.4 |    34.78 |    62.79 |    69.71 |                   |
+  AbstractController.ts |      100 |      100 |      100 |      100 |                   |
+  constant.ts           |      100 |      100 |      100 |      100 |                   |
+  decorator.ts          |    75.97 |    52.17 |    72.22 |    77.05 |... 54,163,164,183 |
+  swagger.ts            |    30.56 |        0 |        0 |    30.56 |... 05,207,215,216 |
+ ts-restful/core/router |    67.56 |    56.39 |    69.23 |     68.6 |                   |
+  index.ts              |    67.56 |    56.39 |    69.23 |     68.6 |... 73,381,395,407 |
+------------------------|----------|----------|----------|----------|-------------------|
+```
+
 ### 快速使用
 - 支持express和KOA
 - 为了简化ts-express-restful 模块使用，实现了一个[restful-started](https://www.npmjs.com/package/restful-started) 模块，使用默认配置，一句启动项目.
