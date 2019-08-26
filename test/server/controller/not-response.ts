@@ -1,5 +1,5 @@
 import { Restful, NotRepsonse, HttpResponse } from "../../../core/decorator";
-import { GetMapping } from '../../../dist';
+import { GetMapping } from '../../../';
 
 @Restful('/not-response')
 export default class NotResponseController {
