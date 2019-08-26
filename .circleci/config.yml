@@ -5,4 +5,8 @@ jobs:
        - image: node:8.16.1-jessie
      steps:
        - checkout
-       - npm test
+       - run: 
+        command: |
+          npm i 
+          npm test
+        
