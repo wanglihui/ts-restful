@@ -1,5 +1,7 @@
 # restful
 
+[![CircleCI](https://circleci.com/gh/wanglihui/ts-restful.svg?style=svg)](https://circleci.com/gh/wanglihui/ts-restful)
+
 ### 快速使用
 - 支持express和KOA
 - 为了简化ts-express-restful 模块使用，实现了一个[restful-started](https://www.npmjs.com/package/restful-started) 模块，使用默认配置，一句启动项目.
@@ -54,7 +56,7 @@
   -  调用Controller的每个函数之前会先调用$before函数，此函数中可以做一些权限校验或者数据统一
 - <del>@ResponseBody()</del> 直接在函数中return默认将结果输出
   - 直接将函数返回内容作为response相应内容
-- @SchemaFilter(schema: any, checkType: boolean) 
+- <del>@SchemaFilter(schema: any, checkType: boolean) </del>
   - 按照schema指定的格式过滤返回结果, checkType 如果不指定或者未true，将严格检查响应的类型是否和指定的schema类型匹配
 - @Autowire 
   - 自动注入Service
