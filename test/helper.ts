@@ -1,7 +1,7 @@
 import * as request from "supertest";
 import {app} from './app';
 
-export function testUrl(url: string, method: string) {
+export function testUrl(url: string, method: string, code: number = 200) {
     return request(app)[method](url)
-    .expect(200);
+    .expect(code);
 }

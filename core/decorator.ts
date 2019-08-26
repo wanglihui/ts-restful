@@ -114,22 +114,6 @@ export interface ResponseBodyFunc {
     (ctx: ContextInterface): Promise<Object>;
 }
 
-export function SchemaFilter(schema: { [index: string]: any }, checkType: boolean = true) { 
-    return function (target, propertyKey: string, desc) { 
-        let fn = desc.value;
-        desc.value = async (req, res, next) => { 
-            let jsonFn = res.json;
-            res.json = (data: any) => { 
-                return jsonFn.bind(res)(filter(data, schema, checkType))
-            }
-            return fn(req, res, next);
-        }
-        Reflect.defineMetadata(SCHEMA_KEY, schema, target, propertyKey);
-        Object.assign(desc.value, fn);
-    }
-}
-
-
 const services: {[index: string]: any} = {}
 const serviceConstructors = [];
 
@@ -173,6 +157,9 @@ function isNeedIgnore(f: string, ignores: (string | RegExp)[]) {
 }
 
 function _scan(dir: string, ignores?: (string | RegExp)[]) {
+    if (!ignores) {
+        ignores = [/\.d\.ts$/, /\.js\.map$/];
+    }
     let files = fs.readdirSync(dir);
     for (let f of files) {
         if (isNeedIgnore(f, ignores)) { 

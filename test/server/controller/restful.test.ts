@@ -25,5 +25,7 @@ describe("decoration", ()=> {
     it("@Router should be ok", async () => {
         return testUrl("/url/router-get", 'get');
     })
-
+    it("error should be handle by", async () => {
+        return testUrl("/url/error", 'get', 500);
+    })
 });

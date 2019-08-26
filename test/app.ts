@@ -11,10 +11,28 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 
 const router = express.Router();
-const ignores = [/\.d\.ts$/, /\.js\.map$/, /\.test\./]
+const ignores = [/\.d\.ts$/, /\.js\.map$/, /\.test\./, 'ignore']
  //* if want to scan muti direction , you can call muti times scannerDecoration()
 const scannerPath = path.resolve(__dirname, 'server')
 scannerDecoration(scannerPath, ignores);
-registerControllerToRouter(router, {isKoaRouter: false});
+scannerDecoration(path.resolve(__dirname, 'server2'));
+registerControllerToRouter(router, {isKoaRouter: false, swagger: true, isShowUrls: true, urlsPath: '/~urls'});
+
+const adminRoute = express.Router();
+function respFormat(data) {
+    return data;
+}
+registerControllerToRouter(adminRoute, {group: 'admin', respFormat});
+
 app.use(router);
-export {app};
+app.use('/admin', adminRoute);
+
+import * as Koa from 'koa';
+const koaApp = new Koa();
+import * as KoaRoute from 'koa-router';
+const koaRouter = new KoaRoute();
+koaApp.use(koaRouter.routes());
+
+registerControllerToKoaRouter(koaRouter, {isKoaRouter: true});
+
+export {app, koaApp};

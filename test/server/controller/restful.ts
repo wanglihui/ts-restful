@@ -8,7 +8,7 @@ export default class RestfulController {
     }
 }
 
-@Restful('/url')
+@Restful
 export class UrlController {
     @GetMapping("/")
     async index() {
@@ -24,7 +24,7 @@ export class UrlController {
     async postMapping() {
         return true;
     }
-    @RequestMapping('/request-mapping', 'delete')
+    @RequestMapping('/request-mapping', 'delete', {doc: "DELETE MAPPING"})
     async deleteMapping() {
         return 'delete-mapping';
     }
@@ -39,5 +39,10 @@ export class UrlController {
     @Router('/router-post', 'post')
     async routerPost() {
         return 'router-post'
+    }
+
+    @Router('/error', 'get')
+    async error() { 
+        throw new Error("error");
     }
 }
