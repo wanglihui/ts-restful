@@ -1,11 +1,10 @@
 {
   "name": "ts-express-restful",
-  "version": "6.0.5",
+  "version": "6.0.6",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "dist": "rm -rf dist && tsc",
-    "prepack": "rm -rf dist && tsc",
     "test": "npx mocha",
     "test-report": "tsc && nyc mocha index.js"
   },
