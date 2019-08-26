@@ -1,5 +1,5 @@
 import { ISwaggerParam } from '../swagger';
-import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL, NEXT_SYMBOL, HEADER_SYMBOL, COOKIE_SYMBOL } from './../constant';
+import { URL_KEY, METHOD_KEY, DOC_KEY, SCHEMA_KEY, GROUP_KEY, API_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL, NEXT_SYMBOL, HEADER_SYMBOL, COOKIE_SYMBOL, NOT_RESPONSE_SYMBOL } from './../constant';
 /**
  * Created by wlh on 2017/8/29.
  */
@@ -225,8 +225,9 @@ export function registerControllerToRouter(router: express.Router | any, options
             if (curUrl.indexOf("/:id") >= 0 || curUrl.indexOf("/:id/") >= 0) {
                 fn = wrapVerifyIdFn.bind(cls)(fn);
             }
+            let notResponse = Reflect.getMetadata(NOT_RESPONSE_SYMBOL, cls, fnName);
             //统一处理async错误，和返回的数据
-            fn = wrapNextFn.bind(cls)(fn, options.isKoaRouter, options.respFormat);
+            fn = wrapNextFn.bind(cls)(fn, options.isKoaRouter, options.respFormat, notResponse);
 
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
@@ -348,7 +349,7 @@ function wrapVerifyIdFn(fn) {
 
 }
 
-function wrapKoaNextFn(fn, respFormat: Function) {
+function wrapKoaNextFn(fn, respFormat: Function, notResponse=false) {
     let self = this;
     return async(ctx, next) => {
         let {req, res} = ctx;
@@ -375,10 +376,10 @@ function wrapKoaNextFn(fn, respFormat: Function) {
     }
 }
 
-function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function) {
+function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function, notResponse = false) {
     let self = this;
     if (isKoaRouter) {
-        return wrapKoaNextFn(fn, respFormat).bind(self);
+        return wrapKoaNextFn(fn, respFormat, notResponse).bind(self);
     }
 
     return async (req, res, next) => {
@@ -388,8 +389,10 @@ function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function) {
             let ret = fn.bind(self)(req, res, next);
             if (ret) { 
                 ret = await ret;
-                ret = await respFormat(ret);
-                res.json(ret);
+                if (!notResponse) {
+                    ret = await respFormat(ret);
+                    res.json(ret);
+                }
             }
         } catch (err) { 
             return next(err);

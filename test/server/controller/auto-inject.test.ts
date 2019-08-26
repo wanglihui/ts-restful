@@ -5,8 +5,8 @@ import * as assert from 'assert';
 describe("inject service", () => {
     it("@Autowire should be ok", async () => {
 
-        request(app)
-        .get('/autoinject')
+        return request(app)
+        .get('/autoinject/index')
         .expect(200)
         .then( (res) => {
             assert.equal(res.body, 'helloworld');

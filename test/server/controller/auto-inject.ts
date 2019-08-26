@@ -9,7 +9,7 @@ export default class AutoInjectController {
 
     @GetMapping("/index")
     async index() {
-        return this.testService.sayHello;
+        return this.testService.sayHello();
     }
 
 }

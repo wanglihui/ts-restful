@@ -1,4 +1,4 @@
-import { URL_KEY, DOC_KEY, METHOD_KEY, GROUP_KEY, SCHEMA_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL, NEXT_SYMBOL, HEADER_SYMBOL, COOKIE_SYMBOL } from './constant';
+import { URL_KEY, DOC_KEY, METHOD_KEY, GROUP_KEY, SCHEMA_KEY, REQUEST_BODY_SYMBOL, REQUEST_GET_SYMBOL, REQUEST_PARAM_SYMBOL, REQUEST_BODY_PARAM_SYMBOL, REQUEST_SYMBOL, RESPONSE_SYMBOL, NEXT_SYMBOL, HEADER_SYMBOL, COOKIE_SYMBOL, NOT_RESPONSE_SYMBOL } from './constant';
 /**
  * Created by wlh on 2017/8/28.
  */
@@ -56,6 +56,11 @@ export function GetMapping(url: string, options?: RouterOptionInterface) {
 export function Router(url: string, method?: string | RouterOptionInterface, options?: RouterOptionInterface) {
     return RequestMapping(url, method, options);
 }
+
+export function NotRepsonse(target: any, key: string, descriper: any) {
+    Reflect.defineMetadata(NOT_RESPONSE_SYMBOL, true, target, key);
+}
+
 
 const UUID_REG = /^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/;
 
@@ -212,6 +217,7 @@ function propertyDecorate(target, propertyName, paramterIndex, type: propertyDec
 export function RequestBody(target: any, propertyName: string | symbol, paramterIndex: number) {
     return propertyDecorate(target, propertyName, paramterIndex, REQUEST_BODY_SYMBOL);
 } 
+
 
 /**
  * 获取URL中占位符参数
