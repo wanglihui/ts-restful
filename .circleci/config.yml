@@ -1,8 +1,8 @@
 version: 2
- jobs:
+jobs:
    build:
      docker:
        - image: node:8.16.1-jessie
      steps:
        - checkout
-       - run: npm test
+       - npm test
