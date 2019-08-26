@@ -77,7 +77,7 @@ All files               |    86.98 |    76.92 |    84.62 |    86.91 |           
   - 自动注入Service
 - @Service 
   - 将一个class标记为service
-- <del>@RequestBody</del> @RequestBodyParam @RequestParam @HttpRequest @HttpResponse @QueryStringParam
+- @RequestBody @RequestBodyParam @RequestParam @HttpRequest @HttpResponse @QueryStringParam @Header @Cookie
   - 自动注入函数参数 
   - @RequestBody 注入 req.body, 
   - @RequestBodyParam 注入 req.body.[参数名]
