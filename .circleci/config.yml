@@ -6,7 +6,6 @@ jobs:
      steps:
        - checkout
        - run: 
-        command: |
-          npm i 
-          npm test
-        
+	        command:   
+  	        npm i &&
+    	      npm test
