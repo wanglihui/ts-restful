@@ -27,6 +27,13 @@ registerControllerToRouter(adminRoute, {group: 'admin', respFormat});
 app.use(router);
 app.use('/admin', adminRoute);
 
+app.use( (err, req, res, next) => {
+    if (err && err.code != 404) {
+        return res.status(500).json({code: 500, msg: 'System Error'})
+    }
+    return next(err);
+})
+
 import * as Koa from 'koa';
 const koaApp = new Koa();
 import * as KoaRoute from 'koa-router';

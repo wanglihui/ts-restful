@@ -1,11 +1,11 @@
 {
   "name": "ts-express-restful",
-  "version": "6.0.7",
+  "version": "6.0.8",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "dist": "rm -rf dist && tsc",
-    "test": "npx mocha",
+    "test": "npx mocha --exit ",
     "test-report": "tsc && nyc mocha index.js"
   },
   "author": "lihui.wang@jingli365.com",
