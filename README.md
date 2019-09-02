@@ -57,26 +57,37 @@ All files               |    86.98 |    76.92 |    84.62 |    86.91 |           
 
 -  @Restful @Restful(mountUrl)
    - 将一个Controller转为一个RestfulController, 此装饰器可以接受一个URL函数，标示此Controller想要挂载的URL,如果没有挂载的URL为Controller名字去掉Controller后缀
+
 - @Router(url, method?: string, options: any) 
   - 将Controller中的函数转为一个可供外部访问的Http Api, 此装饰器可以自定义Controller中函数对外的URL地址
+
 - @RequestMapping @PostMapping @GetMapping
   - 类似于Router
+
 - scannerDecorator 
   - 此函数会需要扫描注解的路径
+
 - registerControllerToRouter 
   - 此函数会把所有调用了@Restful的controller注册到路由上
+
 - (controller instance).$isValidId 
   - 主要是用于验证此controller 的ID风格，如果此函数返回false，则不是ID
+
 - (controller instance).$before
   -  调用Controller的每个函数之前会先调用$before函数，此函数中可以做一些权限校验或者数据统一
+
 - <del>@ResponseBody()</del> 直接在函数中return默认将结果输出
   - 直接将函数返回内容作为response相应内容
+
 - <del>@SchemaFilter(schema: any, checkType: boolean) </del>
   - 按照schema指定的格式过滤返回结果, checkType 如果不指定或者未true，将严格检查响应的类型是否和指定的schema类型匹配
+
 - @Autowire 
   - 自动注入Service
+
 - @Service 
   - 将一个class标记为service
+
 - @RequestBody @RequestBodyParam @RequestParam @HttpRequest @HttpResponse @QueryStringParam @Header @Cookie
   - 自动注入函数参数 
   - @RequestBody 注入 req.body, 
@@ -84,7 +95,10 @@ All files               |    86.98 |    76.92 |    84.62 |    86.91 |           
   - @RequestParam 注入 req.param.[参数名]
   - @QueryStringParam 注入  req.query.[参数名]
   - @HttpRequest 注入 req
-  - @HttpResponse 注入 response
+  - @HttpResponse 注入 response 
+  - @NextFunction 注入 next
+  - @Cookie 注入cookie中的值 req.cookies[参数名]
+  - @Header 注入header中的值 req.headers[参数名]
 
 ### 使用
 ---
@@ -136,27 +150,27 @@ export class TestController extends AbstractController {
         //只有ID是数字是才认为是ID 如 /test/1 可以请求到get  /test/xx 为返回404  /test/other 为映射到 other函数
         return /^\d+$/.test(id);
     }
-    
-    async $before(req, res, next) {
-        console.log("before...");
-        next(); //切记需要调用next，否则就停止到这里了
-    }
+
 
     // 调用地址为 /test/:id
-    async get(req, res, next) {
-        res.send("get");
+    async get(@RequestParam id: number) {
+        return {
+            id
+        }
     }
     
     // 调用地址为 /test/other
     @Router("/other")
-    async other(req, res, next) {
-        res.send("other");
+    async other(@RequestParam other: string) {
+        return {
+            other,
+        }
     }
 }
 ```
 
 ### service自动注入
-```
+```javascript
     @Service()
     export class TestService {
 
@@ -172,8 +186,8 @@ export class TestController extends AbstractController {
         test: TestService;
 
         @GetMapping("/helloword")
-        sayHello(req, res, next) {
-            res.send(this.test.sayHello());
+        sayHello() {
+            return this.test.sayHello();
         }
     }
 ```
@@ -204,7 +218,7 @@ export class TestController {
 
 ## [自动生成文档](./swagger.md)
 ```
-     自动生成文档还有若干问题,正在解决
+     swagger 文档默认挂在在 /swagger 路径下
 ```
 
 # changelog
@@ -212,3 +226,4 @@ export class TestController {
 - v 4.0 使用 reflect-metadata 重新实现metadata信息
 - v 4.0 重新实现 @Service @Autowire
 - v 5.0 支持 @RequestBody @RequestBodyParam @RequestParam @QueryStringParam @HttpRequest @HttpResponse 自动注入到controller函数的参数
+- v 6.0 支持KOA, 支持@Header , @Cookie 
