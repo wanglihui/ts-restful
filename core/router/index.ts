@@ -11,9 +11,16 @@ import _ = require("lodash");
 import 'reflect-metadata';
 import { swagger as swaggerObj} from '../swagger';
 import * as swagger from '../swagger';
+import Logger from '../logger';
 
 const respFormat = async function(data: any) {
     return data;
+}
+
+export interface ILog {
+    info(...args): any;
+    debug(...args): any;
+    error(...args): any;
 }
 
 export interface RegisterControllerOptions {
@@ -52,9 +59,9 @@ export interface RegisterControllerOptions {
      */
     group?: string;      //分组
     /**
-     * 是否开启日志，记录请求
+     * @deprecated 使用 setLogger替换
      */
-    logging?: boolean;
+    logging?: boolean | ILog;
     /**
      * 是否开启swagger文档
      */
@@ -102,6 +109,11 @@ export function registerControllerToKoaRouter(router: any, options?: RegisterCon
     options = Object.assign({}, options);
     options.isKoaRouter = true;
     return registerControllerToRouter(router, options);
+}
+
+var logger: ILog = new Logger(false);
+export function setLogger(_logger: ILog | boolean) {
+    logger = new Logger(_logger);
 }
 
 export function registerControllerToRouter(router: express.Router | any, options?: RegisterControllerOptions) {
@@ -231,7 +243,7 @@ export function registerControllerToRouter(router: express.Router | any, options
 
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
-            console.log(method, curUrl)
+            logger.debug(method, curUrl)
             urls.push({ url: method.toUpperCase() + '  ' + curUrl + '  ' + methodDoc, schema: schema });
             if (!options.swagger) { 
                 return;
@@ -371,7 +383,7 @@ function wrapKoaNextFn(fn, respFormat: Function, notResponse=false) {
             ctx.throw(err);
         } finally {
             let diff = process.hrtime(beginTime);
-            console.log(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
+            logger.debug(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
         }
     }
 }
@@ -398,7 +410,7 @@ function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function, notR
             return next(err);
         } finally { 
             let diff = process.hrtime(beginTime);
-            console.log(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
+            logger.debug(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
         }
     }
 }

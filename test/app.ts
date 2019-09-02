@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { registerControllerToKoaRouter, registerControllerToRouter } from '../core/router';
+import { registerControllerToKoaRouter, registerControllerToRouter, setLogger } from '../core/router';
 import { scannerDecoration } from '../core/decorator';
 import * as path from 'path';
 import bodyParser = require('body-parser');
@@ -22,6 +22,23 @@ const adminRoute = express.Router();
 function respFormat(data) {
     return data;
 }
+import * as Log4js from 'log4js';
+
+Log4js.configure({
+    appenders: {
+        all: {
+            type: 'file',
+            filename: 'log/log.log'
+        }
+    },
+    categories: {
+        default: {
+            appenders: ['all'],
+            level: 'debug'
+        }
+    }
+});
+setLogger(Log4js.getLogger());
 registerControllerToRouter(adminRoute, {group: 'admin', respFormat});
 
 app.use(router);
