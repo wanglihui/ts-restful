@@ -1,6 +1,6 @@
 import { AbstractController, Restful, Group } from '../../../index';
 import { Api } from '../../../core/swagger';
-import { GetMapping } from '../../../dist';
+import { GetMapping } from '../../../index';
 
 @Group('manager')
 @Restful()
