@@ -378,9 +378,11 @@ function wrapKoaNextFn(fn, respFormat: Function, notResponse=false) {
             if (ret) {
                 ret = await ret;
             }
-            ret = await respFormat(ret);
-            if (ret) {
-                ctx.body = ret;
+            if (ret !== IGNORE_RESP) {
+                ret = await respFormat(ret);
+                if (ret) {
+                    ctx.body = ret;
+                }
             }
         } catch(err) {
             ctx.throw(err);
@@ -405,8 +407,8 @@ function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function, notR
             if (ret) { 
                 ret = await ret;
                 if (!notResponse) {
-                    ret = await respFormat(ret);
                     if (ret !== IGNORE_RESP) {
+                        ret = await respFormat(ret);
                         res.json(ret);
                     }
                 }

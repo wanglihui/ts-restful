@@ -21,7 +21,7 @@ export default class GroupController extends AbstractController {
 
     @GetMapping("/test")
     test() {
-        return 1;
+        throw new Error("test")
     }
 }
 
