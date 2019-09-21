@@ -13,6 +13,8 @@ import { swagger as swaggerObj} from '../swagger';
 import * as swagger from '../swagger';
 import Logger from '../logger';
 
+export const IGNORE_RESP = Symbol('ignore resp');
+
 const respFormat = async function(data: any) {
     return data;
 }
@@ -352,7 +354,8 @@ function wrapVerifyIdFn(fn) {
         if (!self.$isValidId.bind(self)(id)) {
             //执行下次匹配
             if (next && typeof next == 'function') {
-                return next();
+                next();
+                return IGNORE_RESP;
             }
             throw new Error("Invalid ID");
         }
@@ -403,7 +406,9 @@ function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function, notR
                 ret = await ret;
                 if (!notResponse) {
                     ret = await respFormat(ret);
-                    res.json(ret);
+                    if (ret !== IGNORE_RESP) {
+                        res.json(ret);
+                    }
                 }
             }
         } catch (err) { 

@@ -31,13 +31,11 @@ export default class ParamController extends AbstractController {
 
     @GetMapping('/header-param')
     async headerParam(@Header id: any) {
-        console.log("ID===>", id);
         return {id};
     }
 
     @GetMapping('/cookie-param')
     async cookieParam(@Cookie id: any) {
-        console.log("ID===>", id);
         return {id};
     }
 
