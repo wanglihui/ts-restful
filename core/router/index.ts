@@ -394,7 +394,7 @@ function wrapKoaNextFn(fn, respFormat: Function, notResponse=false, cb?: Functio
         } finally {
             let diff = process.hrtime(beginTime);
             logger.debug(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
-            cb && cb();
+            cb && cb(ctx, next);
         }
     }
 }
@@ -424,7 +424,7 @@ function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function, notR
         } finally { 
             let diff = process.hrtime(beginTime);
             logger.debug(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
-            cb && cb();
+            cb && cb(req, res, next);
         }
     }
 }
