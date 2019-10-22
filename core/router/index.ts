@@ -76,6 +76,11 @@ export interface RegisterControllerOptions {
      * 格式化输出结果
      */
     respFormat?: (data: any) => Promise<any>;
+    /**
+     * 路由调用完成后回调
+     * @description 可以注入链路追踪span.finish()
+     */
+    respFinishCallback?: Function;
 }
 
 export function getDefaultUrl(fnName: string) { 
@@ -241,7 +246,7 @@ export function registerControllerToRouter(router: express.Router | any, options
             }
             let notResponse = Reflect.getMetadata(NOT_RESPONSE_SYMBOL, cls, fnName);
             //统一处理async错误，和返回的数据
-            fn = wrapNextFn.bind(cls)(fn, options.isKoaRouter, options.respFormat, notResponse);
+            fn = wrapNextFn.bind(cls)(fn, options.isKoaRouter, options.respFormat, notResponse, options.respFinishCallback);
 
             method = method.toLowerCase();
             router[method](curUrl, fn.bind(cls));
@@ -289,14 +294,14 @@ export function registerControllerToRouter(router: express.Router | any, options
         let urlsPath = options.urlsPath || '/~urls';
         router.all(urlsPath, wrapNextFn(function(req, res, next) {
             return urls;
-        }, options.isKoaRouter, respFormat));
+        }, options.isKoaRouter, respFormat, false, options.respFinishCallback));
     }
     if (options && options.swagger) { 
         router.all('/swagger', wrapNextFn(function (req, res, next) { 
             let obj: swagger.ISwagger = JSON.parse(JSON.stringify(swaggerObj));
             obj = cleanSwagger(options.group, obj);
             return obj;
-        }, options.isKoaRouter, respFormat));
+        }, options.isKoaRouter, respFormat, false, options.respFinishCallback));
     }
     return router;
 }
@@ -364,7 +369,7 @@ function wrapVerifyIdFn(fn) {
 
 }
 
-function wrapKoaNextFn(fn, respFormat: Function, notResponse=false) {
+function wrapKoaNextFn(fn, respFormat: Function, notResponse=false, cb?: Function) {
     let self = this;
     return async(ctx, next) => {
         let {req, res} = ctx;
@@ -389,14 +394,15 @@ function wrapKoaNextFn(fn, respFormat: Function, notResponse=false) {
         } finally {
             let diff = process.hrtime(beginTime);
             logger.debug(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
+            cb && cb();
         }
     }
 }
 
-function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function, notResponse = false) {
+function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function, notResponse = false, cb?: Function) {
     let self = this;
     if (isKoaRouter) {
-        return wrapKoaNextFn(fn, respFormat, notResponse).bind(self);
+        return wrapKoaNextFn(fn, respFormat, notResponse, cb).bind(self);
     }
 
     return async (req, res, next) => {
@@ -418,6 +424,7 @@ function wrapNextFn(fn, isKoaRouter: boolean = false, respFormat: Function, notR
         } finally { 
             let diff = process.hrtime(beginTime);
             logger.debug(`${label} ${diff[0]* 1e3 + diff[1]/1e6}ms`);
+            cb && cb();
         }
     }
 }

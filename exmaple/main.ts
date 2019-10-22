@@ -40,7 +40,11 @@ if (group) {
     console.log(`启用分组:${group}`)
 }
 
-registerControllerToRouter(router, { isShowUrls: true, kebabCase: true, group: group, swagger: true , respFormat: respFormat});
+function callback() {
+    console.debug(`call callback`)
+}
+
+registerControllerToRouter(router, { isShowUrls: true, kebabCase: true, group: group, swagger: true , respFormat: respFormat, respFinishCallback: callback});
 const router2 = express.Router();
 registerControllerToRouter(router2, { group: 'manager', swagger: true});
 app.use('/api/v1', router);

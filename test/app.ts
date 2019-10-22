@@ -39,7 +39,11 @@ Log4js.configure({
     }
 });
 setLogger(Log4js.getLogger());
-registerControllerToRouter(adminRoute, {group: 'admin', respFormat});
+
+function callback() {
+    console.log(`resp finish call callback `)
+}
+registerControllerToRouter(adminRoute, {group: 'admin', respFormat, respFinishCallback: callback});
 
 app.use(router);
 app.use('/admin', adminRoute);
