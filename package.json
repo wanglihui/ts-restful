@@ -28,7 +28,7 @@
     "express": "^4.15.4",
     "koa": "^2.8.1",
     "koa-router": "^7.4.0",
-    "log4js": "^5.1.0",
+    "log4js": "^6.4.0",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
     "source-map-support": "^0.5.13",
